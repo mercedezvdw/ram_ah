@@ -8,9 +8,51 @@ from house import House
 from battery import Battery
 from cable import CableSegment
 
-# function to read the supplied CSV file
-def ReadCSV():
-    return
+# function to read the supplied CSV files
+def ReadCSVs(district_number):
+    # create lists to store data in and a row variable to use to read file
+    battery_row = 0
+    house_row = 0
+    battery_position = []
+    battery_capacity = []
+    house_position = []
+    house_maxoutput = []
+
+    # read both files
+    input_file_batteries = open(f'Data/district_{district_number}/district-{district_number}_batteries.csv', 'r')
+    input_file_houses = open(f'Data/district_{district_number}/district-{district_number}_houses.csv', 'r')
+
+    # go through all rows and store data into lists
+    # BATTERIES
+    # read
+    for row_count in input_file_batteries:
+        if battery_row > 0:
+            row_count = row_count.strip()
+            if '"' in row_count:
+                row_count = row_count.replace('"','')
+            data_split = row_count.split(',')
+            #print(data_split)
+
+            # store data
+            battery_position.append([data_split[0], data_split[1]])
+            battery_capacity.append(data_split[2])
+        battery_row += 1
+
+    input_file_batteries.close()
+
+    # HOUSES
+    for row_count in input_file_houses:
+        if house_row > 0:
+            row_count = row_count.strip()
+            data_split = row_count.split(',')
+            print(data_split)
+            house_position.append([data_split[0], data_split[1]])
+            house_maxoutput.append(data_split[2])
+        house_row += 1
+
+    input_file_houses.close()
+
+    return battery_position, battery_capacity, house_position, house_maxoutput
 
 
 def DrawCase(GridSize):
@@ -33,5 +75,5 @@ def DrawCase(GridSize):
     # actuallly plot the thing
     plt.show()
 
-
+ReadCSVs(1)
 DrawCase(10)
