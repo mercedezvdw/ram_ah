@@ -12,6 +12,7 @@ from cable import CableSegment
 def ReadCSV():
     return
 
+
 def DrawCase(GridSize):
     # plot grid lines
     for i in range(GridSize+1):
@@ -31,5 +32,6 @@ def DrawCase(GridSize):
     plt.axis('scaled')
     # actuallly plot the thing
     plt.show()
+
 
 DrawCase(10)
