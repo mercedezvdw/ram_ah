@@ -4,12 +4,15 @@
 # import all things needed
 import matplotlib.pyplot as plt
 import numpy as np
-from house import House
-from battery import Battery
-from cable import CableSegment
+from code.classes.house import House
+from code.classes.battery import Battery
+from code.classes.cable import CableSegment
 
 # function to read the supplied CSV files
 def ReadCSVs(district_number):
+    """
+    Reads the supplied .csv-files and stores the data in objects.
+    """
     # create lists to store data in and a row variable to use to read file
     battery_row = 0
     house_row = 0
@@ -17,8 +20,8 @@ def ReadCSVs(district_number):
     houses = {}
 
     # read both files
-    input_file_batteries = open(f'Data/district_{district_number}/district-{district_number}_batteries.csv', 'r')
-    input_file_houses = open(f'Data/district_{district_number}/district-{district_number}_houses.csv', 'r')
+    input_file_batteries = open(f'data/district_{district_number}/district-{district_number}_batteries.csv', 'r')
+    input_file_houses = open(f'data/district_{district_number}/district-{district_number}_houses.csv', 'r')
 
     # go through all rows and store data into lists
     # BATTERIES
@@ -54,7 +57,67 @@ def ReadCSVs(district_number):
     return batteries, houses
 
 
-def DrawCase(batteries, houses):
+def ConnectCables():
+    """
+    Connects cables from houses to batteries
+    """
+    # --------------------------------------------------------- REPRESENTATION ONLY ---------------------------------------------------------
+    # this part is hard coded for now, create and use algorithms for baseline and on
+    #29,36 - b
+    #34,47 - h1 - cable 11 down and 5 left
+    #24,22 - h2 - cable 14 up and 5 right
+    cables = {}
+    # for now do all steps in one direction in a loop
+    pos_battery = batteries[0].position
+    pos_house_1 = houses[0].position
+    pos_house_2 = houses[1].position
+    cable_price = 10
+
+    pos_begin = pos_house_1
+    # left
+    for i in range(0,abs(batteries[0].position[0] - houses[0].position[0])):
+        if i > 0:
+            pos_begin = pos_end
+        pos_end = np.subtract(pos_begin, [1,0])
+        #print(pos_begin, pos_end)
+        cables[i] = CableSegment(pos_begin, pos_end, cable_price)
+    j = abs(batteries[0].position[0] - houses[0].position[0])
+    # down
+    for i in range(j, j + abs(batteries[0].position[1] - houses[0].position[1])):
+        if i > 0:
+            pos_begin = pos_end
+        pos_end = np.subtract(pos_begin, [0,1])
+        #print(pos_begin, pos_end)
+        cables[i] = CableSegment(pos_begin, pos_end, cable_price)
+    j += abs(batteries[0].position[1] - houses[0].position[1])
+
+    pos_begin = pos_house_2
+    # right
+    for i in range(j,j+abs(batteries[0].position[0] - houses[1].position[0])):
+        if i > j:
+            pos_begin = pos_end
+        pos_end = np.subtract(pos_begin, [-1,0])
+        #print(pos_begin, pos_end)
+        cables[i] = CableSegment(pos_begin, pos_end, cable_price)
+    j += abs(batteries[0].position[0] - houses[1].position[0])
+    # up
+    for i in range(j, j + abs(batteries[0].position[1] - houses[1].position[1])):
+        if i > 0:
+            pos_begin = pos_end
+        pos_end = np.subtract(pos_begin, [0,-1])
+        #print(pos_begin, pos_end)
+        cables[i] = CableSegment(pos_begin, pos_end, cable_price)
+    j += abs(batteries[0].position[1] - houses[1].position[1])
+
+    return cables
+
+    # --------------------------------------------------------- REPRESENTATION ONLY ---------------------------------------------------------
+
+
+def DrawCase(batteries, houses, cables):
+    """
+    Draws a map of the chosen district showing all houses, battries and cables
+    """
     # create a merged list of all positions and get the minimum and maximum x and y values to make a map
     # add all x and y to respective lists
     all_x = []
@@ -98,7 +161,9 @@ def DrawCase(batteries, houses):
     for i in range(len(batteries)):
         plt.scatter(batteries[i].position[0], batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery')
     # plot cables
-    plt.plot()
+    for i in range(len(cables)):
+        plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b')
+
     # drawing details
     plt.xlim(-1,GridSize+1)
     plt.ylim(-1,GridSize+1)
@@ -109,4 +174,5 @@ def DrawCase(batteries, houses):
     plt.show()
 
 batteries, houses = ReadCSVs(0)
-DrawCase(batteries, houses)
+cables = ConnectCables()
+DrawCase(batteries, houses, cables)
