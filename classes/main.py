@@ -48,8 +48,8 @@ def ReadCSVs(district_number):
 
     input_file_houses.close()
 
-    print(batteries[0].position)
-    print(houses[0].position)
+    #print(batteries[0].position)
+    #print(houses[0].position)
 
     return batteries, houses
 
@@ -69,12 +69,12 @@ def DrawCase(batteries, houses):
         all_y.append(houses[i].position[1])
 
     # find min and max x and y
-    print(all_x, all_y)
     min_x = min(all_x)
     min_y = min(all_y)
     max_x = max(all_x)
     max_y = max(all_y)
-    print(min_x, min_y, max_x, max_y)
+    #print(all_x, all_y)
+    #print(min_x, min_y, max_x, max_y)
 
     # define a square based on the biggest axix
     if (max_x - min_x) > (max_y - min_y):
@@ -86,17 +86,17 @@ def DrawCase(batteries, houses):
         GridSize = int(max_y - min_y)
         minimum = min_y
         maximum = max_y
-
+    
     # plot grid lines
-    for i in range(minimum, maximum+1):
-        plt.vlines(x = i, ymin = minimum, ymax = maximum, linestyles = "-", alpha = 0.33)
-        plt.hlines(y = i, xmin = minimum, xmax = maximum, linestyles = "-", alpha = 0.33)
+    for i in range(minimum-5, maximum+6):
+        plt.vlines(x = i, ymin = minimum-5, ymax = maximum+5, linestyles = "-", alpha = 0.33, zorder=-1)
+        plt.hlines(y = i, xmin = minimum-5, xmax = maximum+5, linestyles = "-", alpha = 0.33, zorder=-1)
     # plot houses
     for i in range(len(houses)):
-        plt.scatter(houses[i].position[0], houses[i].position[1], color = 'r', label = 'house')
+        plt.scatter(houses[i].position[0], houses[i].position[1], s = 75, color = 'r', marker = '^', label = 'house')
     # plot batteries
     for i in range(len(batteries)):
-        plt.scatter(batteries[i].position[0], batteries[i].position[1], color = 'g', label = 'battery')
+        plt.scatter(batteries[i].position[0], batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery')
     # plot cables
     plt.plot()
     # drawing details
@@ -108,5 +108,5 @@ def DrawCase(batteries, houses):
     # actuallly plot the thing
     plt.show()
 
-batteries, houses = ReadCSVs(1)
+batteries, houses = ReadCSVs(0)
 DrawCase(batteries, houses)
