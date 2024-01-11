@@ -13,10 +13,8 @@ def ReadCSVs(district_number):
     # create lists to store data in and a row variable to use to read file
     battery_row = 0
     house_row = 0
-    battery_position = []
-    battery_capacity = []
-    house_position = []
-    house_maxoutput = []
+    batteries = {}
+    houses = {}
 
     # read both files
     input_file_batteries = open(f'Data/district_{district_number}/district-{district_number}_batteries.csv', 'r')
@@ -34,8 +32,7 @@ def ReadCSVs(district_number):
             #print(data_split)
 
             # store data
-            battery_position.append([data_split[0], data_split[1]])
-            battery_capacity.append(data_split[2])
+            batteries[battery_row-1] = Battery([int(data_split[0]), int(data_split[1])], float(data_split[2]))
         battery_row += 1
 
     input_file_batteries.close()
@@ -45,35 +42,71 @@ def ReadCSVs(district_number):
         if house_row > 0:
             row_count = row_count.strip()
             data_split = row_count.split(',')
-            print(data_split)
-            house_position.append([data_split[0], data_split[1]])
-            house_maxoutput.append(data_split[2])
+            #print(data_split)
+            houses[house_row-1] = House([int(data_split[0]), int(data_split[1])], float(data_split[2]))
         house_row += 1
 
     input_file_houses.close()
 
-    return battery_position, battery_capacity, house_position, house_maxoutput
+    print(batteries[0].position)
+    print(houses[0].position)
+
+    return batteries, houses
 
 
-def DrawCase(GridSize):
+def DrawCase(batteries, houses):
+    # create a merged list of all positions and get the minimum and maximum x and y values to make a map
+    # add all x and y to respective lists
+    all_x = []
+    all_y = []
+    for i in range(len(batteries)):
+        all_x.append(batteries[i].position[0])
+    for i in range(len(batteries)):
+        all_y.append(batteries[i].position[1])
+    for i in range(len(houses)):
+        all_x.append(houses[i].position[0])
+    for i in range(len(houses)):
+        all_y.append(houses[i].position[1])
+
+    # find min and max x and y
+    print(all_x, all_y)
+    min_x = min(all_x)
+    min_y = min(all_y)
+    max_x = max(all_x)
+    max_y = max(all_y)
+    print(min_x, min_y, max_x, max_y)
+
+    # define a square based on the biggest axix
+    if (max_x - min_x) > (max_y - min_y):
+        # make sure GridSize is an int
+        GridSize = int(max_x - min_x)
+        minimum = min_x
+        maximum = max_x
+    else:
+        GridSize = int(max_y - min_y)
+        minimum = min_y
+        maximum = max_y
+
     # plot grid lines
-    for i in range(GridSize+1):
-        plt.vlines(x = i, ymin = 0, ymax = GridSize, linestyles = ":", alpha = 0.5)
-        plt.hlines(y = i, xmin = 0, xmax = GridSize, linestyles = ":", alpha = 0.5)
+    for i in range(minimum, maximum+1):
+        plt.vlines(x = i, ymin = minimum, ymax = maximum, linestyles = "-", alpha = 0.33)
+        plt.hlines(y = i, xmin = minimum, xmax = maximum, linestyles = "-", alpha = 0.33)
     # plot houses
-    plt.plot()
+    for i in range(len(houses)):
+        plt.scatter(houses[i].position[0], houses[i].position[1], color = 'r', label = 'house')
     # plot batteries
-    plt.plot()
+    for i in range(len(batteries)):
+        plt.scatter(batteries[i].position[0], batteries[i].position[1], color = 'g', label = 'battery')
     # plot cables
     plt.plot()
     # drawing details
     plt.xlim(-1,GridSize+1)
     plt.ylim(-1,GridSize+1)
-    plt.legend()
+    #plt.legend()
     plt.tight_layout()
     plt.axis('scaled')
     # actuallly plot the thing
     plt.show()
 
-ReadCSVs(1)
-DrawCase(10)
+batteries, houses = ReadCSVs(1)
+DrawCase(batteries, houses)
