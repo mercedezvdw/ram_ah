@@ -10,3 +10,25 @@ SmartGrid is a problem that describes a district with these houses and batteries
 After this, the user needs to install the required packages, listed in 'requirements.txt'.
 The user now needs to open the 'ram_ah' directory in the preferred code editor.
 Now, the user simply needs to type 'python main.py' into the command line and press enter, and the code will run.*
+
+
+## 15-01-2024 Notes of algorithm ideas
+
+* KNN Algorithm to divide neighborhoods and find closest battery
+
+Average locations; average amt of cables. maybe use it as regression to find approximate (main) cable location.
+
+Random walk
+
+
+evaluation: amount of meters used for cables.
+
+extra constraint: capacity
+
+Use node system to find density across nodes.*
+
+
+
+
+
+
