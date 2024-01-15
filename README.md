@@ -14,18 +14,21 @@ Now, the user simply needs to type 'python main.py' into the command line and pr
 
 ## 15-01-2024 Notes of algorithm ideas
 
-* KNN Algorithm to divide neighborhoods and find closest battery
+KNN Algorithm to divide neighborhoods and find closest battery
+Density of houses (SPH-like); main cable with small(er) branches to closeby houses
 
-Average locations; average amt of cables. maybe use it as regression to find approximate (main) cable location.
-
-Random walk
-
+Algorithms:
+- Average Location Detection Algorithm (ALDA) ( find average location of all houses (within sub-districts) to batteries / calculate average amount of cables / maybe use it as regression to find approximate (main) cable location)
+- Density Computing Algorithm (DCA) (uses either KNN or altered SPH density calculations / compute house density and create subdistricts)
+- Random Walk Algorithm (RWA) (3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords))
+- Nearest Neighbour Algorithm (NNA) (from Nth house to nearest battery or cable segment / use different combinations of houses to find optimal minimum cable length / is like KNN, but oversimplified and self made)
+- Smart Allocated Density Districts Algorithm (SADDA) (use (self built) KNN Algorithm to find 'sub-districts' / place a main cable through the highest density of a sub-district)
 
 evaluation: amount of meters used for cables.
 
 extra constraint: capacity
 
-Use node system to find density across nodes.*
+Use grid node system to find density across nodes.
 
 
 
