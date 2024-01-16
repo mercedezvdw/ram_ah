@@ -5,3 +5,6 @@ class House():
     def __init__(self, position, max_output):
         self.position = position
         self.max_output = max_output
+        
+    def __str__(self):
+        return f"{self.position}, {self.max_output}"

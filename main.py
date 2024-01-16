@@ -4,9 +4,11 @@
 # import all things needed
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 from code.classes.house import House
 from code.classes.battery import Battery
 from code.classes.cable import CableSegment
+from code.algorithms.randomise import random_assignment
 
 # function to read the supplied CSV files
 def ReadCSVs(district_number):
@@ -56,12 +58,11 @@ def ReadCSVs(district_number):
 
     return batteries, houses
 
-
-def ConnectCables():
+def ConnectCables_repo():
     """
     Connects cables from houses to batteries
     """
-    # --------------------------------------------------------- REPRESENTATION ONLY ---------------------------------------------------------
+    # ---------------------- REPRESENTATION ONLY ----------------------
     # this part is hard coded for now, create and use algorithms for baseline and on
     #29,36 - b
     #34,47 - h1 - cable 11 down and 5 left
@@ -111,8 +112,23 @@ def ConnectCables():
 
     return cables
 
-    # --------------------------------------------------------- REPRESENTATION ONLY ---------------------------------------------------------
-
+    # ---------------------- RANDOM WALK ALGORITHM ----------------------
+def ConnectCables():
+    """
+    Connects cables from houses to batteries
+    """
+    cable_price = 10
+    cables = {}
+    i = 0
+    
+    for house, battery in connections.items():  
+        pos_begin = house.position
+        pos_end = battery.position
+        
+        cables[i] = CableSegment(pos_begin, pos_end, cable_price)
+        i += 1
+        
+    return cables
 
 def DrawCase(batteries, houses, cables):
     """
@@ -174,5 +190,6 @@ def DrawCase(batteries, houses, cables):
     plt.show()
 
 batteries, houses = ReadCSVs(0)
+connections = random_assignment(list(houses.values()), list(batteries.values()))
 cables = ConnectCables()
 DrawCase(batteries, houses, cables)

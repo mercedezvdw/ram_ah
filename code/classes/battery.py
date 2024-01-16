@@ -5,3 +5,6 @@ class Battery():
     def __init__(self, position, capacity):
         self.position = position
         self.capacity = capacity
+
+    def __str__(self):
+        return f"{self.position}, {self.capacity}"
