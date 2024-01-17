@@ -16,3 +16,26 @@ def random_assignment(houses, batteries):
         connections[house] = random_battery
     
     return connections
+    
+def random_walk(start_position, end_position):
+    """
+    Random walk genereates the route per connection
+    """
+    
+    current_position = start_position
+    route = [current_position]
+    
+    while current_position != end_position:
+        # Random choice of direction
+        direction = random.choice([(0, 1), (0, -1), (1, 0), (-1, 0)])
+        
+        # Calculate new position after following direction
+        new_position = (current_position[0] + direction[0], current_position[1] + direction[1])
+
+        # Make sure it's within the grid size
+        if 0 <= new_position[0] < 50 and 0 <= new_position[1] < 50:
+            current_position = new_position
+            route.append(current_position)
+        
+    return route
+            
