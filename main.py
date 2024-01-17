@@ -11,6 +11,7 @@ from code.classes.cable import CableSegment
 from code.algorithms.DCA import DensityComputation
 from code.algorithms.randomise import *
 
+
 # function to read the supplied CSV files
 def ReadCSVs(district_number):
     """
@@ -35,7 +36,7 @@ def ReadCSVs(district_number):
             if '"' in row_count:
                 row_count = row_count.replace('"','')
             data_split = row_count.split(',')
-            #print(data_split)
+            # print(data_split)
 
             # store data
             batteries[battery_row-1] = Battery([int(data_split[0]), int(data_split[1])], float(data_split[2]))
@@ -134,6 +135,8 @@ def ConnectCables():
 def DrawCase(batteries, houses, cables, extraGridSpace, connections):
     """
     Draws a map of the chosen district showing all houses, battries and cables
+
+    NOTE: cables argument is not used!
     """
     DCA = DensityComputation(batteries, houses)
     PosList = DCA.GetPosList()
@@ -191,11 +194,21 @@ def DrawCase(batteries, houses, cables, extraGridSpace, connections):
     #    plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b', zorder=0)
 
     # ---------------------- RANDOM WALK ALGORITHM ----------------------
+    route_lengths = []
+    
     for house, battery in connections.items():
+
         route = generate_routes(house.position, battery.position)
+        route_lengths.append({"from": house, "to": battery, "length": len(route)})
+
+        # print(route)
+        print(f"Route from House at {house.position} to Battery {battery.position} is {len(route)} steps long.\n")
         # Plot cable route
         x, y = zip(*route)
         plt.plot(x, y, color='b', zorder=0)
+
+    total_length = sum([route["length"] for route in route_lengths])
+    print(f"Total length of all routes is {total_length}.\n")
         
     # plot density map
     cmap = plt.set_cmap('inferno')
@@ -210,7 +223,9 @@ def DrawCase(batteries, houses, cables, extraGridSpace, connections):
     # actuallly plot the thing
     plt.show()
 
-batteries, houses = ReadCSVs(0)
+batteries, houses = ReadCSVs("test")
+
 connections = make_connections(houses, batteries)
+# print(connections)
 cables = ConnectCables()
 DrawCase(batteries, houses, cables, 5, connections)
