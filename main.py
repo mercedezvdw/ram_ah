@@ -9,7 +9,7 @@ from code.classes.house import House
 from code.classes.battery import Battery
 from code.classes.cable import CableSegment
 from code.algorithms.DCA import DensityComputation
-from code.algorithms.randomise import random_assignment
+from code.algorithms.randomise import *
 
 # function to read the supplied CSV files
 def ReadCSVs(district_number):
@@ -122,16 +122,16 @@ def ConnectCables():
     cables = {}
     i = 0
     
-    for house, battery in connections.items():  
-        pos_begin = house.position
-        pos_end = battery.position
+    for house, battery in connections.items():
+            pos_begin = house.position
+            pos_end = battery.position
         
-        cables[i] = CableSegment(pos_begin, pos_end, cable_price)
-        i += 1
-        
-    return cables
+            cables[i] = CableSegment(pos_begin, pos_end, cable_price)
+            i += 1
 
-def DrawCase(batteries, houses, cables, extraGridSpace):
+    return connections, cables
+
+def DrawCase(batteries, houses, cables, extraGridSpace, connections):
     """
     Draws a map of the chosen district showing all houses, battries and cables
     """
@@ -187,8 +187,16 @@ def DrawCase(batteries, houses, cables, extraGridSpace):
     for i in range(len(batteries)):
         plt.scatter(batteries[i].position[0], batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery', zorder=1)
     # plot cables
-    for i in range(len(cables)):
-        plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b', zorder=0)
+    #for i in range(len(cables)):
+    #    plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b', zorder=0)
+
+    # ---------------------- RANDOM WALK ALGORITHM ----------------------
+    for house, battery in connections.items():
+        route = generate_routes(house.position, battery.position)
+        # Plot cable route
+        x, y = zip(*route)
+        plt.plot(x, y, color='b', zorder=0)
+        
     # plot density map
     cmap = plt.set_cmap('inferno')
     plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
@@ -203,6 +211,6 @@ def DrawCase(batteries, houses, cables, extraGridSpace):
     plt.show()
 
 batteries, houses = ReadCSVs(0)
-connections = random_assignment(list(houses.values()), list(batteries.values()))
+connections = make_connections(houses, batteries)
 cables = ConnectCables()
-DrawCase(batteries, houses, cables, 5)
+DrawCase(batteries, houses, cables, 5, connections)

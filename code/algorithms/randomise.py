@@ -2,24 +2,39 @@
 # Random Walk Algorithm (RWA) (3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords))
 
 import random
+import math
 
-def random_assignment(houses, batteries):
+def calculate_distance(c1, c2):
     """
-    Randomly assign each house to a battery
+    Calculate the distance between two coordinates
     """
+    distance = math.sqrt(((c1[0] - c2[0]) ** 2) + ((c1[1] - c2[1]) ** 2))
     
+def make_connections(houses, batteries):
+    """
+    Connect the houses to the closest battery
+    """
     connections = {}
-
-    # Assign random battery to each house
+    
     for house in houses:
-        random_battery = random.choice(batteries)
-        connections[house] = random_battery
+        nearest_battery = None
+        min_distance = None
+        
+        for battery in batteries:
+                distance = calculate_distance(house.position, battery.position)
+                if min_distance == None:
+                    min_distance = distance
+                elif distance < min_distance:
+                    min_distance = distance
+                    nearest_battery = battery
+        
+        connections[house] = nearest_battery
     
     return connections
     
-def random_walk(start_position, end_position):
+def generate_routes(start_position, end_position):
     """
-    Random walk genereates the route per connection
+    Random walk generates the route per connection
     """
     
     current_position = start_position
@@ -38,4 +53,3 @@ def random_walk(start_position, end_position):
             route.append(current_position)
         
     return route
-            
