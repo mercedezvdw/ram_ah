@@ -8,6 +8,7 @@ import random
 from code.classes.house import House
 from code.classes.battery import Battery
 from code.classes.cable import CableSegment
+from code.algorithms.DCA import DensityComputation
 from code.algorithms.randomise import random_assignment
 
 # function to read the supplied CSV files
@@ -130,10 +131,15 @@ def ConnectCables():
         
     return cables
 
-def DrawCase(batteries, houses, cables):
+def DrawCase(batteries, houses, cables, extraGridSpace):
     """
     Draws a map of the chosen district showing all houses, battries and cables
     """
+    DCA = DensityComputation(batteries, houses)
+    PosList = DCA.GetPosList()
+    DensityMap = DCA.GetDensityMapping(PosList, extraGridSpace)
+    # make DensityMap a numpy array to use more efficiently
+    DensityMap = np.array(DensityMap)
     # create a merged list of all positions and get the minimum and maximum x and y values to make a map
     # add all x and y to respective lists
     all_x = []
@@ -165,25 +171,32 @@ def DrawCase(batteries, houses, cables):
         GridSize = int(max_y - min_y)
         minimum = min_y
         maximum = max_y
-    
+
+    xCenter = int(min_x + (max_x - min_x)/2)
+    yCenter = int(min_y + (max_y - min_y)/2)
+
     # plot grid lines
-    for i in range(minimum-5, maximum+6):
-        plt.vlines(x = i, ymin = minimum-5, ymax = maximum+5, linestyles = "-", alpha = 0.33, zorder=-1)
-        plt.hlines(y = i, xmin = minimum-5, xmax = maximum+5, linestyles = "-", alpha = 0.33, zorder=-1)
+    for i in range(-extraGridSpace, GridSize+1 +extraGridSpace):
+        # I used int()+1 so it is rounded up, int always rounds down
+        plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", alpha = 0.33, zorder=-1)
+        plt.hlines(y = i + int(yCenter - GridSize/2)+1, xmin = int(xCenter - GridSize/2)+1-5, xmax = int(xCenter + GridSize/2)+1+5, linestyles = "-", alpha = 0.33, zorder=-1)
     # plot houses
     for i in range(len(houses)):
-        plt.scatter(houses[i].position[0], houses[i].position[1], s = 75, color = 'r', marker = '^', label = 'house')
+        plt.scatter(houses[i].position[0], houses[i].position[1], s = 75, color = 'r', marker = '^', label = 'house', zorder=1)
     # plot batteries
     for i in range(len(batteries)):
-        plt.scatter(batteries[i].position[0], batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery')
+        plt.scatter(batteries[i].position[0], batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery', zorder=1)
     # plot cables
     for i in range(len(cables)):
-        plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b')
-
+        plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b', zorder=0)
+    # plot density map
+    cmap = plt.set_cmap('inferno')
+    plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
     # drawing details
     plt.xlim(-1,GridSize+1)
     plt.ylim(-1,GridSize+1)
     #plt.legend()
+    plt.colorbar()
     plt.tight_layout()
     plt.axis('scaled')
     # actuallly plot the thing
@@ -192,4 +205,4 @@ def DrawCase(batteries, houses, cables):
 batteries, houses = ReadCSVs(0)
 connections = random_assignment(list(houses.values()), list(batteries.values()))
 cables = ConnectCables()
-DrawCase(batteries, houses, cables)
+DrawCase(batteries, houses, cables, 5)
