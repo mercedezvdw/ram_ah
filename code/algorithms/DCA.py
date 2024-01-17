@@ -2,6 +2,8 @@
 # Density Computing Algorithm (DCA) (uses either KNN or altered SPH density calculations / compute house density and create subdistricts)
 # Use grid node system to find density across nodes.
 
+import numpy as np
+
 class DensityComputation():
     def __init__(self, BatteryList, HouseList):
         self.BatteryPosList = BatteryList
@@ -71,13 +73,8 @@ class DensityComputation():
                     x = abs(houseLocation[0] - localNode[0])
                     y = abs(houseLocation[1] - localNode[1])
                     distance = ((x)**2 + (y)**2)**0.5
-                    # if the distance is 0, then the node is on top of the house, so density is max == 1.1
-                    # (1 is used in nodes next to the house, so add a little more to distinguish where the house is)
-                    # otherwise, the density decreases quadratically
-                    if distance != 0:
-                        DensityValue += 1/(distance)**2
-                    else:
-                        DensityValue += 1.1
+                    DensityValue += np.exp(-(distance**2)/(10))
+
                 DensityMap.append([i,j,DensityValue])
         #print(DensityMap)
 
