@@ -129,7 +129,7 @@ def ConnectCables():
             cables[i] = CableSegment(pos_begin, pos_end, cable_price)
             i += 1
 
-    return connections, cables
+    return cables
 
 def DrawCase(batteries, houses, cables, extraGridSpace, connections):
     """
