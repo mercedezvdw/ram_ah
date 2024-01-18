@@ -138,11 +138,6 @@ def DrawCase(batteries, houses, cables, extraGridSpace, connections):
 
     NOTE: cables argument is not used!
     """
-    DCA = DensityComputation(batteries, houses)
-    PosList = DCA.GetPosList()
-    DensityMap = DCA.GetDensityMapping(PosList, extraGridSpace)
-    # make DensityMap a numpy array to use more efficiently
-    DensityMap = np.array(DensityMap)
     # create a merged list of all positions and get the minimum and maximum x and y values to make a map
     # add all x and y to respective lists
     all_x = []
@@ -210,14 +205,12 @@ def DrawCase(batteries, houses, cables, extraGridSpace, connections):
     total_length = sum([route["length"] for route in route_lengths])
     print(f"Total length of all routes is {total_length}.\n")
         
-    # plot density map
-    cmap = plt.set_cmap('inferno')
-    plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
+    
     # drawing details
     plt.xlim(-1,GridSize+1)
     plt.ylim(-1,GridSize+1)
     #plt.legend()
-    plt.colorbar()
+    
     plt.tight_layout()
     plt.axis('scaled')
     # actuallly plot the thing
