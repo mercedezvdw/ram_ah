@@ -1,4 +1,4 @@
-# Mercedez van der Wal & Rembrand Ruppert
+# Mercedez van der Wal, Rembrand Ruppert, Yessin Radouan
 # Holds the class that defines a house in our case with its properties
 
 # import all things needed
