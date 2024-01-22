@@ -10,6 +10,7 @@ from code.classes.battery import Battery
 from code.classes.cable import CableSegment
 from code.algorithms.DCA import DensityComputation
 from code.algorithms.randomise import *
+from code.algorithms.NBHA import *
 
 
 # function to read the supplied CSV files
@@ -131,8 +132,87 @@ def ConnectCables():
             i += 1
 
     return cables
+    
+# ------------------- NEAREST BATTERY HEURISTIC ALGORITHM -------------------
+def NBH_Algorithm():
+    """
+    Execute Nearest Battery Heuristic Algorithm
+    """
+    cables = {}
+    cable_routes = {}
+    sum_costs = 5000 * (len(batteries))
+    assign_again = []
+    
+    
+    houses_items = list(houses.items())
+    houses_items.sort(key=lambda item: item[1].max_output)
+    sorted_houses = dict(houses_items)
+    
+    houses_copy = houses.copy()
+    # # Random choice of order to assign each house to a cable
+    # shuffled_indexes = list(range(len(houses)))
+    # random.shuffle(shuffled_indexes)
+    # print(shuffled_indexes)
+    
+    for i in range(len(houses_copy)):
+        # Check if there is already a cable path through this house
+        path = find_cable_path(houses_copy[i].position, cable_routes, batteries, houses_copy[i].max_output)
+        if path is not None:
+            connection = path.position
+            closest_option = None
+            route_costs = 0
 
-def DrawCase(batteries, houses, cables, extraGridSpace, connections):
+        else:
+            # Find closest battery with sufficient capacity
+            closest_battery = find_closest_battery(houses_copy[i], batteries, cable_routes, cables, assign_again)
+
+            # Find the closest cable and which battery it is connected to
+            closest_cable, connected_battery = find_closest_cable(cable_routes, houses_copy[i].position, houses_copy[i].max_output, batteries, cables)
+
+            # If there is no cable to connect to, there comes a new cable to the closest battery
+            if closest_cable is None:
+                closest_option = closest_battery.position
+                connection = closest_battery.position
+                cable_route = create_cable_route(houses_copy[i].position, closest_battery.position, houses_copy, closest_battery)
+
+            # Compare the closest cable and the closest battery to decide which option is more close
+            else:
+                closest_option = compare_results(houses_copy[i].position, closest_battery.position, closest_cable)
+
+                # If the battery itself is closer, the cable will be connected to the closest battery
+                if closest_option == closest_battery.position:
+                    connection = closest_battery.position
+                    cable_route = create_cable_route(houses_copy[i].position, closest_battery.position, houses_copy, closest_battery)
+
+                # If not, the connected battery is from the closest cable
+                else:
+                    cable_route = create_cable_route(houses_copy[i].position, closest_option, houses_copy, connected_battery)
+                    connection = connected_battery.position
+            
+            route_costs = (len(cable_route) - 1) * 9
+            cable_routes[i] = cable_route
+
+        print(f"For house {houses[i].position} the closest option is {closest_option}, battery = {connection}")
+        
+        # Add houses from 'assign again' to the for loop
+        for j in range(len(assign_again)):
+            houses_copy[i + j] = assign_again[j - 1]
+            del assign_again[j - 1]
+            j += 1
+        
+        cables[i] = CableSegment(houses_copy[i].position, connection, route_costs)
+        sum_costs += route_costs
+
+        # print(f"begin: {cables[i].pos_begin}, end: {cables[i].pos_end}")
+
+        battery = find_battery(batteries, connection)
+        battery.add_used_capacity(houses_copy[i].max_output)
+    
+    if assign_again == []:
+        print(f"The total price of the cables is {sum_costs}")
+        return cables, cable_routes
+
+def DrawCase(batteries, houses, cables, extraGridSpace, connections, cable_routes):
     """
     Draws a map of the chosen district showing all houses, battries and cables
 
@@ -189,22 +269,27 @@ def DrawCase(batteries, houses, cables, extraGridSpace, connections):
     #    plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b', zorder=0)
 
     # ---------------------- RANDOM WALK ALGORITHM ----------------------
-    route_lengths = []
+    # route_lengths = []
+    #
+    # for house, battery in connections.items():
+    #
+    #     route = generate_routes(house.position, battery.position)
+    #     route_lengths.append({"from": house, "to": battery, "length": len(route)})
+    #
+    #     # print(route)
+    #     print(f"Route from House at {house.position} to Battery {battery.position} is {len(route)} steps long.\n")
+    #     # Plot cable route
+    #     x, y = zip(*route)
+    #     plt.plot(x, y, color='b', zorder=0)
+    #
+    # total_length = sum([route["length"] for route in route_lengths])
+    # print(f"Total length of all routes is {total_length}.\n")
     
-    for house, battery in connections.items():
-
-        route = generate_routes(house.position, battery.position)
-        route_lengths.append({"from": house, "to": battery, "length": len(route)})
-
-        # print(route)
-        print(f"Route from House at {house.position} to Battery {battery.position} is {len(route)} steps long.\n")
-        # Plot cable route
+    # ------------------- NEAREST BATTERY HEURISTIC ALGORITHM -------------------
+    # Plot cables
+    for key, route in cable_routes.items():
         x, y = zip(*route)
         plt.plot(x, y, color='b', zorder=0)
-
-    total_length = sum([route["length"] for route in route_lengths])
-    print(f"Total length of all routes is {total_length}.\n")
-        
     
     # drawing details
     plt.xlim(-1,GridSize+1)
@@ -216,9 +301,8 @@ def DrawCase(batteries, houses, cables, extraGridSpace, connections):
     # actuallly plot the thing
     plt.show()
 
-batteries, houses = ReadCSVs("test")
-
+batteries, houses = ReadCSVs(1)
 connections = make_connections(houses, batteries)
 # print(connections)
-cables = ConnectCables()
-DrawCase(batteries, houses, cables, 5, connections)
+cables, cable_routes = NBH_Algorithm()
+DrawCase(batteries, houses, cables, 5, connections, cable_routes)
