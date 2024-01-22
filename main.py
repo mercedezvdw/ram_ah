@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
 
     # read the file and save battery and house positions
-    district = "1"
+    district = "0"
     file = CSVReader(f"{district}")
     batteries, houses = file.ReadCSV()
 
