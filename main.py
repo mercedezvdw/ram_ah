@@ -36,6 +36,17 @@ def ConnectCables():
 
 
 if __name__ == "__main__":
+    # do something with command line inputs
+    # for example:
+    # > python main.py 1 SADDA 1000
+    # [0]: district number
+    # [1]: what algorithm to use and where to store it (1 file per algorithm per district)
+    # [2]: number of runs
+    # [3]: TBD
+
+
+
+
     # read the file and save battery and house positions
     district = "1"
     file = CSVReader(f"{district}")
