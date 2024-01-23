@@ -2,6 +2,7 @@
 # Smart Allocated Density Districts Algorithm (SADDA) (use (self built) K-means clustering algorithm to find 'sub-districts' / connects houses to the best possible battery)
 
 from code.algorithms.DCA import DensityComputation
+from code.classes.cable import CableSegment
 import numpy as np
 import random
 
@@ -137,6 +138,27 @@ class SADDA():
 
         self.HBC = HBC
         return HBC
+    
+
+    def calculate_distance(self, c1, c2):
+        """
+        Calculate the distance between two coordinates
+        """
+        distance = (((c1[0] - c2[0]) ** 2) + ((c1[1] - c2[1]) ** 2))**0.5
+        return distance
+
+
+    def make_connections(self):
+        """
+        Connect the houses to the closest battery
+        format: {house object: battery object}
+        """
+        connections = {}
+        
+        for i in range(len(self.HBC)):            
+            connections[self.HousePosList[self.HBC[i][0]]] = self.BatteryPosList[self.HBC[i][1]]
+        
+        return connections
 
     def create_cable_route(self, start_position, end_position, houses, battery):
         """
@@ -178,14 +200,22 @@ class SADDA():
             current_position = [current_position[0] - 1, current_position[1]]
             cable_route.append(current_position.copy())
             
-        house = self.check_if_house(houses, cable_route)
-        
-        if house is not None:
-            check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house.max_output)
-            if check_capacity < 0:
-                AssertionError
+
     
         return cable_route
+
+
+    def check_battery_capacity(self, capacity, used_capacity, house_output):
+        capacity = capacity - used_capacity - house_output
+        return capacity
+
+
+    def check_if_house(self, houses, cable_route):
+        for route in cable_route[1:]:
+            for house in houses.values():
+                if house.position == route:
+                    return house
+
     
     def SADDA_Run(self):
         """
@@ -193,11 +223,20 @@ class SADDA():
         """
         cable_routes = {}
         cables = {}
+        sum_costs = 5000 * (len(self.BatteryPosList))
+
         for i in range(len(self.HBC)):
-            connection = 0
+            connection = self.BatteryPosList[self.HBC[i][1]]
+            cable_route = self.create_cable_route(self.HousePosList[self.HBC[i][0]].position, self.BatteryPosList[self.HBC[i][1]].position, self.HousePosList[self.HBC[i][0]], self.BatteryPosList[self.HBC[i][1]])
             #connection = battery.position
             #cable_route = self.create_cable_route(houses_posses[i].position, battery.position, houses_posses, battery)
             #self.HBC[i][0] = house number
             #self.HBC[i][1] = battery number
 
+            route_costs = (len(cable_route) - 1) * 9
+            cable_routes[i] = cable_route
+            cables[i] = CableSegment(self.HousePosList[self.HBC[i][0]].position, connection, route_costs)
+            sum_costs += route_costs
+
+        print(f"The total price of the cables is {sum_costs}")
         return cables, cable_routes

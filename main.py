@@ -50,22 +50,32 @@ if __name__ == "__main__":
 
 
     # read the file and save battery and house positions
-    district = "0"
+    district = "1"
     file = CSVReader(f"{district}")
     batteries, houses = file.ReadCSV()
 
     # alg 1 - SADDA
+    #'''
     sad = SADDA(batteries, houses)
     posses = sad.GetPosList()
     centroids = sad.GetCentroidPositions(posses)
     HBC = sad.GetHouseBatteryConnection(posses, centroids)
+    connections = sad.make_connections()
+    #print(connections)
+    cables, cable_routes = sad.SADDA_Run()
     #print(HBC)
+    #'''
 
     # alg 2
+    '''
     connections = make_connections(houses, batteries)
-    # print(connections)
+    #print(connections)
     MW_Alg = NBH_A(batteries, houses)
     cables, cable_routes = MW_Alg.NBH_Algorithm()
+    #'''
+
+    # alg 3
+
 
     # draw
     case = PlotCase(batteries, houses, cables, 5, connections, cable_routes, centroids)
