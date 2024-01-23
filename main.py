@@ -14,6 +14,8 @@ from code.classes.plot import PlotCase
 from code.classes.readCSV import CSVReader
 from code.algorithms.SADDA import SADDA
 from code.algorithms.NBHA import NBH_A
+from code.classes.readData import ReadData
+from code.classes.writeData import WriteData
 
 
     # ---------------------- RANDOM WALK ALGORITHM ----------------------
