@@ -8,7 +8,7 @@ from code.algorithms.randomise import *
 from code.algorithms.DCA import DensityComputation
 
 class PlotCase():
-    def __init__(self, batteries, houses, cables, extraGridSpace, connections, cable_routes, centroids):
+    def __init__(self, batteries, houses, cables, extraGridSpace, connections, cable_routes):
         """
         Initialsize all variables needed to plot a district map
         """
@@ -17,7 +17,6 @@ class PlotCase():
         self.cables = cables
         self.extraGridSpace = extraGridSpace
         self.connections = connections
-        self.centroids = centroids
         self.cable_routes = cable_routes
 
 
@@ -28,12 +27,12 @@ class PlotCase():
         NOTE: cables argument is not used!
         """
         # calculate a density mapping of all houses in the district
-        DCA = DensityComputation(self.batteries, self.houses)
-        PosList = DCA.GetPosList()
-        DensityMap = DCA.GetDensityMapping(PosList, self.extraGridSpace)
-        DensityMap = DCA.AlterGrid(DensityMap)
+        #DCA = DensityComputation(self.batteries, self.houses)
+        #PosList = DCA.GetPosList()
+        #DensityMap = DCA.GetDensityMapping(PosList, self.extraGridSpace)
+        #DensityMap = DCA.AlterGrid(DensityMap)
         # make DensityMap a numpy array to use more efficiently
-        DensityMap = np.array(DensityMap)
+        #DensityMap = np.array(DensityMap)
 
         # create a merged list of all positions and get the minimum and maximum x and y values to make a map
         # add all x and y to respective lists
@@ -71,9 +70,9 @@ class PlotCase():
         yCenter = int(min_y + (max_y - min_y)/2)
 
         # plot density map
-        cmap = plt.set_cmap('inferno')
-        plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
-        plt.colorbar()
+        #cmap = plt.set_cmap('inferno')
+        #plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
+        #plt.colorbar()
 
         # plot grid lines
         for i in range(-self.extraGridSpace, GridSize+1 +self.extraGridSpace):
@@ -86,10 +85,7 @@ class PlotCase():
         # plot batteries
         for i in range(len(self.batteries)):
             plt.scatter(self.batteries[i].position[0], self.batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery', zorder=1)
-        # plot centroids
-        for i in range(len(self.centroids)):
-            plt.scatter(self.centroids[i][0], self.centroids[i][1], s = 75, color = 'cyan', marker = ',', label = 'battery', zorder=1)
-        
+
         # plot cables
         #for i in range(len(cables)):
         #    plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b', zorder=0)

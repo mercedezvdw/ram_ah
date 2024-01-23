@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
 
     # read the file and save battery and house positions
-    district = "0"
+    district = "1"
     file = CSVReader(f"{district}")
     batteries, houses = file.ReadCSV()
 
@@ -76,10 +76,10 @@ if __name__ == "__main__":
     #'''
 
     # alg 3
-
+    #...
 
     # draw
-    case = PlotCase(batteries, houses, cables, 5, connections, cable_routes, centroids)
+    case = PlotCase(batteries, houses, cables, 5, connections, cable_routes)
     case.DrawCase()
 
 

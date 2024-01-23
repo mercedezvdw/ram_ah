@@ -76,8 +76,10 @@ class SADDA():
         for i in range(numCentroids):
             centroids.append([self.HousePosList[i].position[0], self.HousePosList[i].position[1]])
 
-        # repeat the next step until there is no change, 42 is (ofcourse) the correct number of loops for this to have diminishing to no returns
-        for _ in range(42):
+        # repeat the next step until there is no change,
+        # 42 is (ofcourse) the correct number of loops for this to have diminishing to no returns,
+        # but 10 roughly disperses the capacity the best
+        for _ in range(10):
             # calculate for every house which is the nearest centroid and then assign this position to that centroid
             centroidAssignmentList = [] # [centroid number, x, y]
             for i in range(len(self.HousePosList)):
@@ -233,8 +235,19 @@ class SADDA():
             route_costs = (len(cable_route) - 1) * 9
             cable_routes[i] = cable_route
             cables[i] = CableSegment(self.HousePosList[self.HBC[i][0]].position, connection, route_costs)
+            self.BatteryPosList[self.HBC[i][1]].add_used_capacity(self.HousePosList[self.HBC[i][0]].max_output)
             sum_costs += route_costs
             print(f"For house {self.HousePosList[self.HBC[i][0]].position} the best option is {self.BatteryPosList[self.HBC[i][1]].position}, battery = {connection}")
         
         print(f"The total price of the cables is {sum_costs}")
+        for i in range(len(self.BatteryPosList)):
+            print(f'capacity of battery at {self.BatteryPosList[i].position}: {self.BatteryPosList[i].capacity}, used capacity: {self.BatteryPosList[i].get_capacity()}')
+
+        ####
+        #/ ---------------------------------------------------------- IMPORTANT
+        # cables overlap, so check the cable segment lists to check where there are overlapping segments and remove all but 1
+        #
+        #
+        ###
+
         return cables, cable_routes
