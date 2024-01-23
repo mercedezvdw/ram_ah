@@ -125,8 +125,8 @@ class SADDA():
 
         # for every house, determine the best battery to use using the centroids
         for i in range(len(self.HousePosList)):
-            #BHC.append()
             for j in range(len(centroids)):
+
                 x = PosList[i][0] - centroids[j][0]
                 y = PosList[i][1] - centroids[j][1]
                 distance = (x**2 + y**2)**0.5
@@ -135,4 +135,69 @@ class SADDA():
                     assignedBattery = j
             HBC.append([i, assignedBattery])
 
+        self.HBC = HBC
         return HBC
+
+    def create_cable_route(self, start_position, end_position, houses, battery):
+        """
+        Create cable with shortest path (based on heuristics) from start to end position
+        """
+        steps_right = 0
+        steps_left = 0
+        steps_up = 0
+        steps_down = 0
+        current_position = start_position
+        
+        # Compare the x coordinates, to determine to go left or right
+        if start_position[0] < end_position[0]:
+            steps_right = end_position[0] - start_position[0]
+        elif start_position[0] > end_position[0]:
+            steps_left = start_position[0] - end_position[0]
+        
+        # Compare the y coordinates, to determine to go up or down
+        if start_position[1] < end_position[1]:
+            steps_up = end_position[1] - start_position[1]
+        elif start_position[1] > end_position[1]:
+            steps_down = start_position[1] - end_position[1]
+
+        cable_route = [current_position.copy()]
+        
+        # Move on the y axis
+        for i in range(steps_up):
+            current_position = [current_position[0], current_position[1] + 1]
+            cable_route.append(current_position.copy())
+        for i in range(steps_down):
+            current_position = [current_position[0], current_position[1] - 1]
+            cable_route.append(current_position.copy())
+        
+        # Move on the x axis
+        for i in range(steps_right):
+            current_position = [current_position[0] + 1, current_position[1]]
+            cable_route.append(current_position.copy())
+        for i in range(steps_left):
+            current_position = [current_position[0] - 1, current_position[1]]
+            cable_route.append(current_position.copy())
+            
+        house = self.check_if_house(houses, cable_route)
+        
+        if house is not None:
+            check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house.max_output)
+            if check_capacity < 0:
+                AssertionError
+    
+        return cable_route
+    
+    def SADDA_Run(self):
+        """
+        Runs the algorithm.
+        """
+        cable_routes = {}
+        cables = {}
+        for i in range(len(self.HBC)):
+            connection = 0
+            #connection = battery.position
+            #cable_route = self.create_cable_route(houses_posses[i].position, battery.position, houses_posses, battery)
+            #self.HBC[i][0] = house number
+            #self.HBC[i][1] = battery number
+
+        return cables, cable_routes
