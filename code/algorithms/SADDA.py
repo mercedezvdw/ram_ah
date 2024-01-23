@@ -16,6 +16,7 @@ class SADDA():
         
         #print(self.BatteryPosList[0].position)
     
+
     def GetPosList(self):
         """
         Creates a mapping of house density using the assumption we use a 1x1 grid.
@@ -29,6 +30,7 @@ class SADDA():
         #print(PosList)
         return PosList
     
+
     def GetCentroidPositions(self, PosList):
         """
         Forms as many centroids as there are batteries, places them randomly, finds the nearest houses to each centroid, reset centroid position based on houses around it
@@ -113,10 +115,10 @@ class SADDA():
                 # update position
                 centroids[i][0] = x_coord
                 centroids[i][1] = y_coord
-        
-            
+
         return centroids
     
+
     def GetHouseBatteryConnection(self, PosList, centroids):
         """
         Finds the best house-battery connection per house.
@@ -160,6 +162,7 @@ class SADDA():
         
         return connections
 
+
     def create_cable_route(self, start_position, end_position, houses, battery):
         """
         Create cable with shortest path (based on heuristics) from start to end position
@@ -199,22 +202,16 @@ class SADDA():
         for i in range(steps_left):
             current_position = [current_position[0] - 1, current_position[1]]
             cable_route.append(current_position.copy())
-            
 
-    
         return cable_route
 
 
     def check_battery_capacity(self, capacity, used_capacity, house_output):
+        """
+        Checks the capacity of the given battery
+        """
         capacity = capacity - used_capacity - house_output
         return capacity
-
-
-    def check_if_house(self, houses, cable_route):
-        for route in cable_route[1:]:
-            for house in houses.values():
-                if house.position == route:
-                    return house
 
     
     def SADDA_Run(self):
@@ -226,17 +223,18 @@ class SADDA():
         sum_costs = 5000 * (len(self.BatteryPosList))
 
         for i in range(len(self.HBC)):
+            # makes the connection between houses and batteries,
+            # determined by either the closest cable or the assigned battery
+            # (closest cable still needs to be implemented)
+
             connection = self.BatteryPosList[self.HBC[i][1]]
             cable_route = self.create_cable_route(self.HousePosList[self.HBC[i][0]].position, self.BatteryPosList[self.HBC[i][1]].position, self.HousePosList[self.HBC[i][0]], self.BatteryPosList[self.HBC[i][1]])
-            #connection = battery.position
-            #cable_route = self.create_cable_route(houses_posses[i].position, battery.position, houses_posses, battery)
-            #self.HBC[i][0] = house number
-            #self.HBC[i][1] = battery number
 
             route_costs = (len(cable_route) - 1) * 9
             cable_routes[i] = cable_route
             cables[i] = CableSegment(self.HousePosList[self.HBC[i][0]].position, connection, route_costs)
             sum_costs += route_costs
-
+            print(f"For house {self.HousePosList[self.HBC[i][0]].position} the best option is {self.BatteryPosList[self.HBC[i][1]].position}, battery = {connection}")
+        
         print(f"The total price of the cables is {sum_costs}")
         return cables, cable_routes
