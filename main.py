@@ -63,6 +63,7 @@ if __name__ == "__main__":
     connections = sad.make_connections()
     #print(connections)
     cables, cable_routes = sad.SADDA_Run()
+    print(len(cable_routes))
     #print(HBC)
     #'''
 
