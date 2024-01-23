@@ -10,6 +10,8 @@ class ReadData():
         """
         Reads all data from the corresponding file.
         The format we use splits the data using ; instead of ',', due to the stored house, battery and cable data.
+        format:
+        total_costs; houses; batteries; cables
         """
         return None
     
