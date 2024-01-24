@@ -220,6 +220,11 @@ class SADDA():
         """
         Runs the algorithm.
         """
+
+        posses = self.GetPosList()
+        centroids = self.GetCentroidPositions(posses)
+        HBC = self.GetHouseBatteryConnection(posses, centroids)
+        # connections = self.make_connections()
         cable_routes = {}
         cables = {}
         sum_costs = 5000 * (len(self.BatteryPosList))
@@ -237,7 +242,7 @@ class SADDA():
             cables[i] = CableSegment(self.HousePosList[self.HBC[i][0]].position, connection, route_costs)
             self.BatteryPosList[self.HBC[i][1]].add_used_capacity(self.HousePosList[self.HBC[i][0]].max_output)
             sum_costs += route_costs
-            print(f"For house {self.HousePosList[self.HBC[i][0]].position} the best option is {self.BatteryPosList[self.HBC[i][1]].position}, battery = {connection}")
+            # print(f"For house {self.HousePosList[self.HBC[i][0]].position} the best option is {self.BatteryPosList[self.HBC[i][1]].position}, battery = {connection}")
         
         print(f"The total price of the cables is {sum_costs}")
         for i in range(len(self.BatteryPosList)):

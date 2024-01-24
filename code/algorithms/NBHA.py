@@ -487,7 +487,7 @@ class NBH_A():
 
 
     # ------------------- NEAREST BATTERY HEURISTIC ALGORITHM -------------------
-    def NBH_Algorithm(self):
+    def run(self):
         """
         Execute Nearest Battery Heuristic Algorithm
         """
@@ -544,7 +544,7 @@ class NBH_A():
                 route_costs = (len(cable_route) - 1) * 9
                 cable_routes[i] = cable_route
 
-            print(f"For house {self.houses[i].position} the closest option is {closest_option}, battery = {connection}")
+            # print(f"For house {self.houses[i].position} the closest option is {closest_option}, battery = {connection}")
             
             # Add houses from 'assign again' to the for loop
             for j in range(len(assign_again)):

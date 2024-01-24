@@ -8,15 +8,13 @@ from code.algorithms.randomise import *
 from code.algorithms.DCA import DensityComputation
 
 class PlotCase():
-    def __init__(self, batteries, houses, cables, extraGridSpace, connections, cable_routes):
+    def __init__(self, batteries, houses, extraGridSpace, cable_routes):
         """
         Initialsize all variables needed to plot a district map
         """
         self.batteries = batteries
         self.houses = houses
-        self.cables = cables
         self.extraGridSpace = extraGridSpace
-        self.connections = connections
         self.cable_routes = cable_routes
 
 
