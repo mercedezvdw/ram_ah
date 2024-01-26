@@ -20,11 +20,17 @@ class NBH_A():
 
 
     def check_battery_capacity(self, capacity, used_capacity, house_output):
+        """
+        Check if the battery has sufficient capacity to connect a certain house
+        """
         capacity = capacity - used_capacity - house_output
         return capacity
 
 
     def find_cable_path(self, target_position, cable_routes, batteries, house_output):
+        """
+        Find the cable path of a coordinate and find the connected battery
+        """
         for route in cable_routes.values():
             for coordinate in route:
                 if coordinate == target_position:
@@ -95,9 +101,9 @@ class NBH_A():
                 return nearest_battery
             else:
                 # If there is no battery left with sufficient capacity, undo random connection with battery that has most capacity left
-
                 random_house = self.find_random_connection(cables, batteries[i])
                 self.undo_connection(house, battery_full, cable_routes, assign_again)
+                
                 # Reset min_distance for the next iteration
                 min_distance = float('inf')
 
@@ -252,8 +258,6 @@ class NBH_A():
     
         return cable_route
 
-
-    # ------------------- NEAREST BATTERY HEURISTIC ALGORITHM -------------------
     def run(self):
         """
         Execute Nearest Battery Heuristic Algorithm
@@ -310,8 +314,6 @@ class NBH_A():
                 
                 route_costs = (len(cable_route) - 1) * 9
                 cable_routes[i] = cable_route
-
-            # print(f"For house {self.houses[i].position} the closest option is {closest_option}, battery = {connection}")
             
             # Add houses from 'assign again' to the for loop
             for j in range(len(assign_again)):
@@ -321,12 +323,12 @@ class NBH_A():
             
             cables[i] = CableSegment(houses_copy[i].position, connection, route_costs)
             sum_costs += route_costs
-
-            # print(f"begin: {cables[i].pos_begin}, end: {cables[i].pos_end}")
-
+            
+            # Add capacity of house to used capacity of the connected battery
             battery = self.find_battery(self.batteries, connection)
             battery.add_used_capacity(houses_copy[i].max_output)
         
+        # Make sure all houses are assigned and connected to a battery
         if assign_again == []:
             print(f"The total price of the cables is {sum_costs}")
             return cables, cable_routes

@@ -7,9 +7,9 @@ import math
 
 def calculate_distance(c1, c2):
     """
-    Calculate the distance between two coordinates
+    Calculate the Manhattan distance between two coordinates
     """
-    distance = math.sqrt(((c1[0] - c2[0]) ** 2) + ((c1[1] - c2[1]) ** 2))
+    distance = abs(c1[0] - c2[0]) + abs(c1[1] - c2[1])
     return distance
     
 def make_connections(houses: dict, batteries: dict):
