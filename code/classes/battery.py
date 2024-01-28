@@ -16,6 +16,9 @@ class Battery():
         
     def get_capacity(self):
         return self.used_capacity
+        
+    def reset_capacity(self):
+        self.used_capacity = 0
 
     def __str__(self):
         return f"{self.position}, {self.capacity}"
