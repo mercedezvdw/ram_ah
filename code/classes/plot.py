@@ -17,7 +17,6 @@ class PlotCase():
         self.extraGridSpace = extraGridSpace
         self.cable_routes = cable_routes
 
-
     def DrawCase(self):
         """
         Draws a map of the chosen district showing all houses, battries and cables
@@ -73,11 +72,17 @@ class PlotCase():
         # plot grid lines
         for i in range(-self.extraGridSpace, GridSize+1 +self.extraGridSpace):
             # I used int()+1 so it is rounded up, int always rounds down
-            plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", alpha = 0.33, zorder=-1)
-            plt.hlines(y = i + int(yCenter - GridSize/2)+1, xmin = int(xCenter - GridSize/2)+1-5, xmax = int(xCenter + GridSize/2)+1+5, linestyles = "-", alpha = 0.33, zorder=-1)
+            plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", alpha = 0.11, zorder=-1)
+            plt.hlines(y = i + int(yCenter - GridSize/2)+1, xmin = int(xCenter - GridSize/2)+1-5, xmax = int(xCenter + GridSize/2)+1+5, linestyles = "-", alpha = 0.11, zorder=-1)
+        
+        # Delete labels from x and y axis
+        plt.xticks([])
+        plt.yticks([])
+        
         # plot houses
         for i in range(len(self.houses)):
             plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 75, color = 'r', marker = '^', label = 'house', zorder=1)
+            
         # plot batteries
         for i in range(len(self.batteries)):
             plt.scatter(self.batteries[i].position[0], self.batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery', zorder=1)
