@@ -35,7 +35,7 @@ class Engine:
 
         elif self.algo == "NBHA":
             algo = NBH_A(self.batteries, self.houses)
-            cables, cable_routes = algo.run()
+            cable_routes = algo.run()
 
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)

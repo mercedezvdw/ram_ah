@@ -50,8 +50,6 @@ class PlotCase():
         min_y = min(all_y)
         max_x = max(all_x)
         max_y = max(all_y)
-        #print(all_x, all_y)
-        #print(min_x, min_y, max_x, max_y)
 
         # define a square based on the biggest axix
         if (max_x - min_x) > (max_y - min_y):
@@ -84,30 +82,6 @@ class PlotCase():
         for i in range(len(self.batteries)):
             plt.scatter(self.batteries[i].position[0], self.batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery', zorder=1)
 
-        # plot cables
-        #for i in range(len(cables)):
-        #    plt.plot([cables[i].pos_begin[0], cables[i].pos_end[0]], [cables[i].pos_begin[1], cables[i].pos_end[1]], color='b', zorder=0)
-
-        # ---------------------- RANDOM WALK ALGORITHM ----------------------
-        '''
-        route_lengths = []
-        
-        for house, battery in self.connections.items():
-
-            route = generate_routes(house.position, battery.position)
-            route_lengths.append({"from": house, "to": battery, "length": len(route)})
-
-            # print(route)
-            print(f"Route from House at {house.position} to Battery {battery.position} is {len(route)} steps long.\n")
-            # Plot cable route
-            x, y = zip(*route)
-            #plt.plot(x, y, color='b', zorder=0)
-
-        total_length = sum([route["length"] for route in route_lengths])
-        print(f"Total length of all routes is {total_length}.\n")
-        #'''
-        
-        # ------------------- NEAREST BATTERY HEURISTIC ALGORITHM -------------------
         # Plot cables
         for key, route in self.cable_routes.items():
             x, y = zip(*route)

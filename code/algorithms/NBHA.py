@@ -4,6 +4,7 @@
 
 import math
 import random
+import numpy as np
 from code.classes.cable import CableSegment
 
 class NBH_A():
@@ -348,16 +349,31 @@ class NBH_A():
         
         # Make sure all houses are assigned and connected to a battery
         if assign_again == []:
-            print(f"The total price of the cables is {sum_costs}")
-            return cables, cable_routes
+            return cables, cable_routes, sum_costs
         
+                
     def run(self):
         """
         Execute Nearest Battery Heuristic Algorithm
         """
+        result = []
+        min_costs = float('inf')
+        min_cables = None
+        min_cable_routes = None
         
-        while True:
-            self.get_result()
-    
+        # Run 1000 iterations
+        for i in range(1000):
+            cables, cable_routes, sum_costs = self.get_result()
+            result.append(sum_costs)
             
+            # Plot the best iteration
+            if sum_costs < min_costs:
+                min_cable_routes = cable_routes
+        
+        print("Average: ", (sum(result)/len(result)))
+        print("Median: ", np.median(result))
+        print("Max: ", max(result))
+        print("Min: ", min(result))
+        
+        return min_cable_routes
         
