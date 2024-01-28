@@ -42,6 +42,7 @@ class Engine:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)
                 case.DrawCase()
 
+        print(cable_routes)
         WD = WriteData(self.district,self.algo)
         WD.WriteExperimentData(1, self.houses, self.batteries, cable_routes)
         
