@@ -19,11 +19,16 @@ class WriteData():
         
         # create the entire dataset
         for i in range(len(batteries)):
-            houses_pathing = []
+            houses_per_battery = []
+            # if functioning correctly, len(houses) == len(cable_routes)
             for j in range(len(houses)):
-                houses_pathing.append(cable_routes)
+                house_pos_str = f"{houses[j].position[0]},{houses[j].position[1]}"
+                house_output = f"{houses[j].max_output}"
+                separate_house = {"location": house_pos_str, "output": house_output, "cables": cable_routes[j]}
+                houses_per_battery.append(separate_house)
+
             bat_pos_str = f"{batteries[i].position[0]},{batteries[i].position[1]}"
-            battery_data = {"location": bat_pos_str, "capacity": 1507.0, "houses": houses_pathing}
+            battery_data = {"location": bat_pos_str, "capacity": 1507.0, "houses": houses_per_battery}
             data.append(battery_data)
         
         # serializing json
