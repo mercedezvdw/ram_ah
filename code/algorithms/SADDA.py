@@ -302,4 +302,4 @@ class SADDA():
         
 
         #return cables, non_overlap_cable_routes
-        return cables, cable_routes
+        return sum_costs, cable_routes

@@ -346,7 +346,8 @@ class NBH_A():
             # Add capacity of house to used capacity of the connected battery
             battery = self.find_battery(self.batteries, connection)
             battery.add_used_capacity(houses_copy[i].max_output)
-        
+
+        self.sum_costs = sum_costs
         # Make sure all houses are assigned and connected to a battery
         if assign_again == []:
             return cables, cable_routes, sum_costs
@@ -375,5 +376,5 @@ class NBH_A():
         print("Max: ", max(result))
         print("Min: ", min(result))
         
-        return min_cable_routes
+        return self.sum_costs, min_cable_routes
         

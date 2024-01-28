@@ -22,7 +22,7 @@ class Engine:
 
         if self.algo == "Rv2":
             algo = Rv2(self.batteries, self.houses)
-            cables, cable_routes = algo.run()
+            total_costs, cable_routes = algo.run()
             
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)
@@ -30,7 +30,7 @@ class Engine:
 
         elif self.algo == "SADDA":
             sad = SADDA(self.batteries, self.houses)
-            cables, cable_routes = sad.SADDA_Run()
+            total_costs, cable_routes = sad.SADDA_Run()
 
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)
@@ -38,15 +38,12 @@ class Engine:
 
         elif self.algo == "NBHA":
             algo = NBH_A(self.batteries, self.houses)
-            cable_routes = algo.run()
+            total_costs, cable_routes = algo.run()
 
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)
                 case.DrawCase()
 
         #print(cable_routes)
-        #RD.ReadExperimentData()
-        WD.WriteExperimentData(1, self.houses, self.batteries, cable_routes)
-        
-
-        
+        WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes)
+        RD.ReadExperimentData()
