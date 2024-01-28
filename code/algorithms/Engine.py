@@ -57,4 +57,5 @@ class Engine:
         #print(self.batteries) # {0: class, 1: class, ...}
         #print(cable_routes) # {0: [[xbegin,ybegin], [xend,yend]], 1: [[xbegin,ybegin], [xend,yend]], ...}
         WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes)
-        total_costs, houses, batteries, cable_routes = RD.ReadExperimentData()
+        total_costs_N, houses_N, batteries_N, cable_routes_N = RD.ReadExperimentData()
+        # when the house-battery assigning works correctly, these read dicts will be the same as the written ones

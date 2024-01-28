@@ -42,7 +42,18 @@ class ReadData():
                 if list(i.keys())[j] == "houses":
                     # go through each house registered under a single battery
                     for k in range(len(list(i.values())[j])):
-                        #print((list(i.values())[j][k]))
+                        #print(len(list(i.values())[j][k]['cables']))
+                        #print((list(i.values())[j][k]['cables'])) # cable_routes = {0:[[x,y], [x,y], ...], 1:[...], ...}
+                        cable_coords = []
+                        # convert all cable route coords to ints and put each route into its own dict kay value pair
+                        for L in range(0,len(list(i.values())[j][k]['cables'])):
+                            cable_coord = [int((list(i.values())[j][k]['cables'][L]).split(',')[0]), int((list(i.values())[j][k]['cables'][L]).split(',')[1])]
+                            cable_coords.append(cable_coord)
+                        # add to a dict
+                        ### CAUTION: the way the houses are not registered to a single battery means there are (N of batteries) times more dictionary entires
+                        # FIX !!!-----------------------------------------------------------------------------------------------------------------------------------------------------------
+                        cable_routes[house_nr] = cable_coords
+
                         coords = (list(i.values())[j][k]['location']).split(',')
                         houses[house_nr] = House([int(coords[0]), int(coords[1])], (list(i.values())[j]))          # pos + output
                         house_nr += 1
