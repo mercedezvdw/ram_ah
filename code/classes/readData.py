@@ -4,6 +4,7 @@
 from code.classes.house import House
 from code.classes.battery import Battery
 from code.classes.cable import CableSegment
+import json
 
 class ReadData():
     def __init__(self, districtNumber, usedAlgorithmNumber):

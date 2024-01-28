@@ -287,9 +287,12 @@ class SADDA():
         # update total costs after cleanup
         sum_costs = 5000 * len(self.BatteryPosList) + 9 * len(non_overlap_cable_segments)
 
+        # print the total costs of the district
         print(f"The total price of the cables is {sum_costs}")
-        for i in range(len(self.BatteryPosList)):
-            print(f'capacity of battery at {self.BatteryPosList[i].position}: {self.BatteryPosList[i].capacity}, used capacity: {self.BatteryPosList[i].get_capacity()}')
+        
+        # also print the capacity and usage of all batteries
+        #for i in range(len(self.BatteryPosList)):
+        #    print(f'capacity of battery at {self.BatteryPosList[i].position}: {self.BatteryPosList[i].capacity}, used capacity: {self.BatteryPosList[i].get_capacity()}')
 
         
 
