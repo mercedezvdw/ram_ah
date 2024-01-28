@@ -29,7 +29,8 @@ class ReadData():
         for i in data:
             print(i, "\n")
             for j in range(len(i)):
-                print(list(i.values())[j], "\n")
+                print(list(i.keys())[j])
+                print(list(i.values())[j])
         
         file.close()
 
