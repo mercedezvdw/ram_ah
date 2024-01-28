@@ -165,9 +165,9 @@ class SADDA():
         return connections
 
 
-    def create_cable_route(self, start_position, end_position, houses, battery):
+    def create_cable_route(self, start_position, end_position, houses, battery, cable_routes):
         """
-        Create cable with shortest path (based on heuristics) from start to end position
+        Create cable with shortest path from start to end position
         """
         steps_right = 0
         steps_left = 0
@@ -192,20 +192,44 @@ class SADDA():
         # Move on the y axis
         for i in range(steps_up):
             current_position = [current_position[0], current_position[1] + 1]
-            cable_route.append(current_position.copy())
+            if current_position not in cable_route:
+                cable_route.append(current_position.copy())
         for i in range(steps_down):
             current_position = [current_position[0], current_position[1] - 1]
-            cable_route.append(current_position.copy())
+            if current_position not in cable_route:
+                cable_route.append(current_position.copy())
         
         # Move on the x axis
         for i in range(steps_right):
             current_position = [current_position[0] + 1, current_position[1]]
-            cable_route.append(current_position.copy())
+            if current_position not in cable_route:
+                cable_route.append(current_position.copy())
         for i in range(steps_left):
             current_position = [current_position[0] - 1, current_position[1]]
-            cable_route.append(current_position.copy())
+            if current_position not in cable_route:
+                cable_route.append(current_position.copy())
 
         return cable_route
+    
+
+    def check_for_overlap(self, cable_routes):
+        """
+        Takes the original complete cable connections and eliminates duplicate/overlapping segment begin/end pos pairs
+        """
+        all_cable_segments = []
+
+        #print(cable_routes)
+        # store all [begin, end] pos coords
+        for i in range(len(cable_routes.items())):
+            for j in range(len(cable_routes[i])-1):
+                all_cable_segments.append([cable_routes[i][j], cable_routes[i][j+1]])
+        #print(all_cable_segments)
+
+        # eliminate duplicates
+        non_overlap_cable_segments = [i for n, i in enumerate(all_cable_segments) if i not in all_cable_segments[:n]]
+        #print(non_overlap_cable_segments)
+
+        return non_overlap_cable_segments
 
 
     def check_battery_capacity(self, capacity, used_capacity, house_output):
@@ -227,6 +251,7 @@ class SADDA():
         # connections = self.make_connections()
         cable_routes = {}
         cables = {}
+        # battery prices specified by the assignment
         sum_costs = 5000 * (len(self.BatteryPosList))
 
         for i in range(len(self.HBC)):
@@ -235,24 +260,37 @@ class SADDA():
             # (closest cable still needs to be implemented)
 
             connection = self.BatteryPosList[self.HBC[i][1]]
-            cable_route = self.create_cable_route(self.HousePosList[self.HBC[i][0]].position, self.BatteryPosList[self.HBC[i][1]].position, self.HousePosList[self.HBC[i][0]], self.BatteryPosList[self.HBC[i][1]])
-
+            cable_route = self.create_cable_route(self.HousePosList[self.HBC[i][0]].position, self.BatteryPosList[self.HBC[i][1]].position, self.HousePosList[self.HBC[i][0]], self.BatteryPosList[self.HBC[i][1]], cable_routes)
+            # 1 unit of cables price specified by assignment
             route_costs = (len(cable_route) - 1) * 9
             cable_routes[i] = cable_route
-            cables[i] = CableSegment(self.HousePosList[self.HBC[i][0]].position, connection, route_costs)
+            #cables[i] = CableSegment(self.HousePosList[self.HBC[i][0]].position, connection, route_costs)
             self.BatteryPosList[self.HBC[i][1]].add_used_capacity(self.HousePosList[self.HBC[i][0]].max_output)
             sum_costs += route_costs
             # print(f"For house {self.HousePosList[self.HBC[i][0]].position} the best option is {self.BatteryPosList[self.HBC[i][1]].position}, battery = {connection}")
-        
-        print(f"The total price of the cables is {sum_costs}")
-        for i in range(len(self.BatteryPosList)):
-            print(f'capacity of battery at {self.BatteryPosList[i].position}: {self.BatteryPosList[i].capacity}, used capacity: {self.BatteryPosList[i].get_capacity()}')
 
         ####
         #/ ---------------------------------------------------------- IMPORTANT
         # cables overlap, so check the cable segment lists to check where there are overlapping segments and remove all but 1
-        #
-        #
-        ###
+            
+        # once all cables have been placed, check if there is any overlap of cables:
+        # make new dicts and store he corrected data in these
+        non_overlap_cable_segments = self.check_for_overlap(cable_routes)
 
-        return cables, cable_routes
+        #print(cable_routes)
+        non_overlap_cable_routes = {}
+        for i in range(len(non_overlap_cable_segments)):
+            non_overlap_cable_routes[i] = non_overlap_cable_segments[i]
+            cables[i] = CableSegment(non_overlap_cable_segments[i][0], non_overlap_cable_segments[i][1], 9)
+        #print(non_overlap_cable_routes)
+
+        # update total costs after cleanup
+        sum_costs = 5000 * len(self.BatteryPosList) + 9 * len(non_overlap_cable_segments)
+
+        print(f"The total price of the cables is {sum_costs}")
+        for i in range(len(self.BatteryPosList)):
+            print(f'capacity of battery at {self.BatteryPosList[i].position}: {self.BatteryPosList[i].capacity}, used capacity: {self.BatteryPosList[i].get_capacity()}')
+
+        
+
+        return cables, non_overlap_cable_routes
