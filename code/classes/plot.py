@@ -16,6 +16,7 @@ class PlotCase():
         self.houses = houses
         self.extraGridSpace = extraGridSpace
         self.cable_routes = cable_routes
+        #print(cable_routes)
 
 
     def DrawCase(self):
