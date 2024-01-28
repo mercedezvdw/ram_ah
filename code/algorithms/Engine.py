@@ -44,6 +44,8 @@ class Engine:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)
                 case.DrawCase()
 
-        #print(cable_routes)
+        #print(self.houses) # {0: class, 1: class, ...}
+        #print(self.batteries) # {0: class, 1: class, ...}
+        #print(cable_routes) # {0: [[xbegin,ybegin], [xend,yend]], 1: [[xbegin,ybegin], [xend,yend]], ...}
         WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes)
         RD.ReadExperimentData()
