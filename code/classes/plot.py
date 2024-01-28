@@ -73,8 +73,8 @@ class PlotCase():
         # plot grid lines
         for i in range(-self.extraGridSpace, GridSize+1 +self.extraGridSpace):
             # I used int()+1 so it is rounded up, int always rounds down
-            plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", alpha = 0.11, zorder=-1)
-            plt.hlines(y = i + int(yCenter - GridSize/2)+1, xmin = int(xCenter - GridSize/2)+1-5, xmax = int(xCenter + GridSize/2)+1+5, linestyles = "-", alpha = 0.11, zorder=-1)
+            plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.2, zorder=-1)
+            plt.hlines(y = i + int(yCenter - GridSize/2)+1, xmin = int(xCenter - GridSize/2)+1-5, xmax = int(xCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.2, zorder=-1)
         
         # Delete labels from x and y axis
         plt.xticks([])
@@ -91,7 +91,7 @@ class PlotCase():
         # Plot cables
         for key, route in self.cable_routes.items():
             x, y = zip(*route)
-            plt.plot(x, y, color='b', zorder=0)
+            plt.plot(x, y, color='b', linewidth=0.666, zorder=0)
         
         # drawing details
         plt.xlim(-1,GridSize+1)
