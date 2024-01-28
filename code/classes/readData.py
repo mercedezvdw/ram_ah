@@ -24,17 +24,38 @@ class ReadData():
         # returns JSON object as 
         # a dictionary
         data = json.load(file)
-        
+        bat_nr = 0
+        house_nr = 0
         # go through each line
         for i in data:
-            print(i, "\n")
+            if list(i.keys())[1] == "costs-shared":
+                total_costs = int(list(i.values())[1])
+            #print(i, "\n")
             for j in range(len(i)):
-                print(list(i.keys())[j])
-                print(list(i.values())[j])
+                # register batteries
+                if list(i.keys())[j] == "location":
+                    coords = (list(i.values())[j]).split(',')
+                    capacity = list(i.values())[j+1]
+                    batteries[bat_nr] = Battery([int(coords[0]), int(coords[1])], float(capacity))      # pos + capacity
+                    bat_nr += 1
+                # register houses
+                if list(i.keys())[j] == "houses":
+                    # go through each house registered under a single battery
+                    for k in range(len(list(i.values())[j])):
+                        #print((list(i.values())[j][k]))
+                        coords = (list(i.values())[j][k]['location']).split(',')
+                        houses[house_nr] = House([int(coords[0]), int(coords[1])], (list(i.values())[j]))          # pos + output
+                        house_nr += 1
+
+                #print(list(i.keys())[j])
+                #print(list(i.values())[j])
         
         file.close()
+        
+        #print(batteries)
+        #print(houses)
 
-        return houses, batteries, cable_routes
+        return total_costs, houses, batteries, cable_routes
 
     
     def ReadBestResult(self):
