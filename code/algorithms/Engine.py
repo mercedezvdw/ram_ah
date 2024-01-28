@@ -16,7 +16,6 @@ class Engine:
         file = CSVReader(f"{district}")
         self.batteries, self.houses = file.ReadCSV()
 
-
     def run(self):
 
         if self.algo == "Rv2":
@@ -44,7 +43,7 @@ class Engine:
                 case.DrawCase()
 
         WD = WriteData(self.district,self.algo)
-        WD.WriteExperimentData()
+        WD.WriteExperimentData(1, self.houses, self.batteries, cable_routes)
         
 
         

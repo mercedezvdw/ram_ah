@@ -8,20 +8,26 @@ class WriteData():
         self.districtNumber = districtNumber
         self.usedAlgorithm = usedAlgorithm
 
-    def WriteExperimentData(self):#, total_costs, houses, batteries, cables):
+    def WriteExperimentData(self, total_costs, houses, batteries, cable_routes):
         """
         Writes the result of a single experiment in a .json file.
         """
         # data (testdata, real data TBD)
-        dictionary = {
-            "name": "sathiyajith",
-            "rollno": 56,
-            "cgpa": 8.6,
-            "phonenumber": "9976770500"
-        }
+        data = []
+        header = {"district": self.districtNumber, "costs-shared": total_costs}
+        data.append(header)
+        
+        # create the entire dataset
+        for i in range(len(batteries)):
+            houses_pathing = []
+            for j in range(len(houses)):
+                houses_pathing.append(cable_routes)
+            bat_pos_str = f"{batteries[i].position[0]},{batteries[i].position[1]}"
+            battery_data = {"location": bat_pos_str, "capacity": 1507.0, "houses": houses_pathing}
+            data.append(battery_data)
         
         # serializing json
-        json_object = json.dumps(dictionary, indent=4)
+        json_object = json.dumps(data, indent=4)
         
         # writing to file
         with open(f"data/results/district_{self.districtNumber}/district-{self.districtNumber}_{self.usedAlgorithm}.json", "w") as outfile:
