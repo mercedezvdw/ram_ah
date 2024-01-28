@@ -1,6 +1,7 @@
 from code.algorithms.Rv2 import Rv2
 from code.algorithms.SADDA import SADDA
 from code.algorithms.NBHA import NBH_A
+from code.algorithms.KNN import KNN
 from code.classes.readCSV import CSVReader
 from code.classes.plot import PlotCase
 from code.classes.readData import ReadData
@@ -39,6 +40,14 @@ class Engine:
         elif self.algo == "NBHA":
             algo = NBH_A(self.batteries, self.houses)
             total_costs, cable_routes = algo.run()
+
+            if self.plot:
+                case = PlotCase(self.batteries, self.houses, 5, cable_routes)
+                case.DrawCase()
+
+        elif self.algo == "KNN":
+            algo = KNN(self.batteries, self.houses)
+            cable_routes = algo.run()
 
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)

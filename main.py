@@ -46,8 +46,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--algo", type=str,
-                        help="algorithm to use: SADDA, NBHA, Rv2",
-                        choices=["SADDA", "NBHA", "Rv2"])
+                        help="algorithm to use: SADDA, NBHA, Rv2, KNN",
+                        choices=["SADDA", "NBHA", "Rv2", "KNN"])
     
     parser.add_argument("--district", type=str,
                         help="What district to use: test, 0, 1, 2, 3",
@@ -58,8 +58,8 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    if args.algo not in ["SADDA", "NBHA", "Rv2"]:
-        raise Exception("Invalid algorithm, options: SADDA, NBHA, Rv2")
+    if args.algo not in ["SADDA", "NBHA", "Rv2", "KNN"]:
+        raise Exception("Invalid algorithm, options: SADDA, NBHA, Rv2, KNN")
     
     if args.district not in ["test", "0", "1", "2", "3"]:
         raise Exception("Invalid district, options: test, 0, 1, 2, 3")
