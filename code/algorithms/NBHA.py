@@ -362,7 +362,7 @@ class NBH_A():
         min_cable_routes = None
         
         # Run 1000 iterations
-        for i in range(1000):
+        for i in range(10):
             cables, cable_routes, sum_costs = self.get_result()
             result.append(sum_costs)
             
