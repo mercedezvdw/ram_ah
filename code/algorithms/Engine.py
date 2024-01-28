@@ -17,6 +17,8 @@ class Engine:
         self.batteries, self.houses = file.ReadCSV()
 
     def run(self):
+        RD = ReadData(self.district,self.algo)
+        WD = WriteData(self.district,self.algo)
 
         if self.algo == "Rv2":
             algo = Rv2(self.batteries, self.houses)
@@ -42,8 +44,8 @@ class Engine:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)
                 case.DrawCase()
 
-        print(cable_routes)
-        WD = WriteData(self.district,self.algo)
+        #print(cable_routes)
+        #RD.ReadExperimentData()
         WD.WriteExperimentData(1, self.houses, self.batteries, cable_routes)
         
 

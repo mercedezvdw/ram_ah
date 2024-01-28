@@ -24,7 +24,15 @@ class WriteData():
             for j in range(len(houses)):
                 house_pos_str = f"{houses[j].position[0]},{houses[j].position[1]}"
                 house_output = f"{houses[j].max_output}"
-                separate_house = {"location": house_pos_str, "output": house_output, "cables": cable_routes[j]}
+
+                # make a list of strings from the route
+                route = []
+                if len(cable_routes[j]):
+                    for k in range(len(cable_routes[j])):
+                        route_str = f"{cable_routes[j][k][0]},{cable_routes[j][k][1]}"
+                        route.append(route_str)
+                    
+                separate_house = {"location": house_pos_str, "output": house_output, "cables": route}
                 houses_per_battery.append(separate_house)
 
             bat_pos_str = f"{batteries[i].position[0]},{batteries[i].position[1]}"
@@ -32,7 +40,7 @@ class WriteData():
             data.append(battery_data)
         
         # serializing json
-        json_object = json.dumps(data, indent=4)
+        json_object = json.dumps(data, indent=2)
         
         # writing to file
         with open(f"data/results/district_{self.districtNumber}/district-{self.districtNumber}_{self.usedAlgorithm}.json", "w") as outfile:
@@ -51,25 +59,53 @@ class WriteData():
 # JSON FORMAT:
 '''
 [
-  {"district": 1, "costs-shared": 10198},
-  {"location": "38,12", "capacity": 1507.0, "houses": [
+  {
+    "district": 1,
+    "costs-shared": 10198
+  },
+  {
+    "location": "38,12",
+    "capacity": 1507.0,
+    "houses": [
       {
         "location": "33,7",
         "output": 39.45690812,
-        "cables": ["33,7", "33,8", "33,9", "33,10", "33,11", "33,12", "34,12", "35,12", "36,12", "37,12", "38,12"]
+        "cables": [
+          "33,7",
+          "33,8",
+          "33,9"
+        ]
       },
       {
         "location": "30,12",
         "output": 66.05341632,
-        "cables": ["30,12", "31,12", "32,12", "33,12", "34,12"]
-      }]
+        "cables": [
+          "30,12",
+          "31,12",
+          "32,12"
+        ]
+      }
+    ]
   },
-  {"location": "42,3", "capacity": 1507.0, "houses": [
+  {
+    "location": "42,3",
+    "capacity": 1507.0,
+    "houses": [
       {
         "location": "48,4",
         "output": 58.90934923,
-        "cables": ["48,4", "48,3", "47,3", "46,3", "45,3", "44,3", "43,3", "42,3"]
-      }]
+        "cables": [
+          "48,4",
+          "48,3",
+          "47,3",
+          "46,3",
+          "45,3",
+          "44,3",
+          "43,3",
+          "42,3"
+        ]
+      }
+    ]
   }
 ]
 #'''
