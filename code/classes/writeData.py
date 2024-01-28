@@ -4,15 +4,15 @@
 import json
 
 class WriteData():
-    def __init__(self, districtNumber, usedAlgorithmNumber):
+    def __init__(self, districtNumber, usedAlgorithm):
         self.districtNumber = districtNumber
-        self.usedAlgorithmNumber = usedAlgorithmNumber
+        self.usedAlgorithm = usedAlgorithm
 
-    def WriteExperimentData(self, total_costs, houses, batteries, cables):
+    def WriteExperimentData(self):#, total_costs, houses, batteries, cables):
         """
         Writes the result of a single experiment in a .json file.
         """
-        # Data to be written
+        # data (testdata, real data TBD)
         dictionary = {
             "name": "sathiyajith",
             "rollno": 56,
@@ -20,12 +20,13 @@ class WriteData():
             "phonenumber": "9976770500"
         }
         
-        # Serializing json
+        # serializing json
         json_object = json.dumps(dictionary, indent=4)
         
-        # Writing to sample.json
-        with open("sample.json", "w") as outfile:
+        # writing to file
+        with open(f"data/results/district_{self.districtNumber}/district-{self.districtNumber}_{self.usedAlgorithm}.json", "w") as outfile:
             outfile.write(json_object)
+
         return None
 
     

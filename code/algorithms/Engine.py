@@ -3,6 +3,8 @@ from code.algorithms.SADDA import SADDA
 from code.algorithms.NBHA import NBH_A
 from code.classes.readCSV import CSVReader
 from code.classes.plot import PlotCase
+from code.classes.readData import ReadData
+from code.classes.writeData import WriteData
 
 class Engine:
 
@@ -40,6 +42,9 @@ class Engine:
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes)
                 case.DrawCase()
+
+        WD = WriteData(self.district,self.algo)
+        WD.WriteExperimentData()
         
 
         
