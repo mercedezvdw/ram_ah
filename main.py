@@ -42,60 +42,7 @@ import argparse
 
 
 if __name__ == "__main__":
-    # do something with command line inputs
-    # for example:
-    # > python main.py 1 SADDA 1000
-    # [0]: district number
-    # [1]: what algorithm to use and where to store it (1 file per algorithm per district)
-    # [2]: number of runs
-    # [3]: TBD
 
-
-
-
-    # read the file and save battery and house positions
-    # district = "1"
-    # file = CSVReader(f"{district}")
-    # batteries, houses = file.ReadCSV()
-
-    # # alg 1 - SADDA
-    
-    # sad = SADDA(batteries, houses)
-    # cables, cable_routes = sad.SADDA_Run()
-
-    
-
-    # alg 2
-    '''
-    connections = make_connections(houses, batteries)
-    #print(connections)
-    MW_Alg = NBH_A(batteries, houses)
-    cables, cable_routes = MW_Alg.NBH_Algorithm()
-    #'''
-
-    # alg 3
-    #...
-
-    # alg 4 Random v2
-
-    # algo = Randomise_v2(batteries, houses)
-    # cables, cable_routes = algo.run()
-
-
-    # alg 5 NBHA
-    # algo = NBH_A(batteries, houses)
-    # cables, cable_routes = algo.run()
-
-    # alg 6 Random
-
-
-
-    # draw
-    # case = PlotCase(batteries, houses, 5, cable_routes)
-    # case.DrawCase()
-
-
-    
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--algo", type=str,
@@ -123,7 +70,6 @@ if __name__ == "__main__":
     
     
 
-    # engine = Engine(args.algo, district, True)
 
 
 
