@@ -10,8 +10,8 @@ class DFM():
         
         self.batteries = batteries
         self.houses = houses
-        self.furthest_house = None
-        self.furthest_from_furthest_house = None
+        self.furthest_house = {}
+        self.furthest_from_furthest_house = {}
 
     def calculate_distance(self, c1, c2):
         """
@@ -197,8 +197,12 @@ class DFM():
             second_furthest_route = self.generate_routes(battery.position, furthest_from_furthest_house.position)
         
             routes[battery] = {}
-            routes[battery]["furthest_house"] = furthest_route
-            routes[battery]["second_furthest_house"] = second_furthest_route
+            routes[battery][furthest_house] = furthest_route
+            routes[battery][furthest_from_furthest_house] = second_furthest_route
+
+            self.furthest_house[battery] = furthest_house
+            self.furthest_from_furthest_house[battery] = furthest_from_furthest_house
+            
     
         # print(routes)
 
@@ -206,9 +210,10 @@ class DFM():
         # go depth first, so find the furthes house and connect to closest cable or linked battery
 
         for battery in connections.keys():
-            unconnected_houses = [house for house in connections[battery] if house not in [furthest_house, furthest_from_furthest_house]]
+            unconnected_houses = [house for house in connections[battery] if house not in [self.furthest_house[battery], self.furthest_from_furthest_house[battery]]]
                
             # find furthest house from battery and make routes until all houses are connected
+            # print(f"STARTING WITH {len(unconnected_houses)} unconnected houses")
             while len(unconnected_houses) > 0:
                 furthest_house = None
                 longest_distance = 0
@@ -255,7 +260,7 @@ class DFM():
                     # remove house from unconnected houses
                     unconnected_houses.remove(furthest_house)
                         
-
+        # print(f"PRINTING FROM ROUTES FUNCTION: {routes}")
         return routes
 
 
@@ -266,11 +271,9 @@ class DFM():
 
             
     
-    def DrawCase(self, connections):
+    def DrawCase(self, connections, routes, extraGridSpace = 5):
         # Define colors for each battery
         colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
-
-        routes = self.set_cables(connections)
 
         idx = 0
         for battery, houses in connections.items():
@@ -286,7 +289,7 @@ class DFM():
 
             # Plot cables
             if battery in routes:
-                for route_key in ['furthest_house', 'second_furthest_house']:
+                for route_key in [self.furthest_house[battery], self.furthest_from_furthest_house[battery]]:
                     if route_key in routes[battery]:
                         route = routes[battery][route_key]
                         x, y = zip(*route)  # Extract x and y coordinates
@@ -294,7 +297,7 @@ class DFM():
 
                 # rest of the cables
                 for house, route in routes[battery].items():
-                    if house not in ['furthest_house', 'second_furthest_house']:
+                    if house not in [self.furthest_house[battery], self.furthest_from_furthest_house[battery]]:
                         x, y = zip(*route)
                         plt.plot(x, y, color=color, linewidth=0.66, zorder=0)
 
@@ -312,12 +315,57 @@ class DFM():
         print(f"Total costs: {cost}")
 
         # Drawing details
-        # plt.xlabel('X Coordinate')
-        # plt.ylabel('Y Coordinate')
-        # plt.title('Map of District with Houses and Batteries')
-        # plt.legend()
-        # plt.axis('equal')
-        # plt.show()
+        all_x = []
+        all_y = []
+        for i in range(len(self.batteries)):
+            all_x.append(self.batteries[i].position[0])
+        for i in range(len(self.batteries)):
+            all_y.append(self.batteries[i].position[1])
+        for i in range(len(self.houses)):
+            all_x.append(self.houses[i].position[0])
+        for i in range(len(self.houses)):
+            all_y.append(self.houses[i].position[1])
+
+        # find min and max x and y
+        min_x = min(all_x)
+        min_y = min(all_y)
+        max_x = max(all_x)
+        max_y = max(all_y)
+
+        # define a square based on the biggest axix
+        if (max_x - min_x) > (max_y - min_y):
+            # make sure GridSize is an int
+            GridSize = int(max_x - min_x)
+            minimum = min_x
+            maximum = max_x
+        else:
+            GridSize = int(max_y - min_y)
+            minimum = min_y
+            maximum = max_y
+
+        xCenter = int(min_x + (max_x - min_x)/2)
+        yCenter = int(min_y + (max_y - min_y)/2)
+
+        # plot density map
+        #cmap = plt.set_cmap('inferno')
+        #plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
+        #plt.colorbar()
+
+        # plot grid lines
+        for i in range(-extraGridSpace, GridSize+1 + extraGridSpace):
+            # I used int()+1 so it is rounded up, int always rounds down
+            plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.1, zorder=-1)
+            plt.hlines(y = i + int(yCenter - GridSize/2)+1, xmin = int(xCenter - GridSize/2)+1-5, xmax = int(xCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.1, zorder=-1)
+        
+        # Delete labels from x and y axis
+        plt.xticks([])
+        plt.yticks([])
+        plt.xlim(-1,GridSize+1)
+        plt.ylim(-1,GridSize+1)
+        plt.tight_layout()
+
+        plt.axis('scaled')
+        plt.show()
 
 
 
@@ -326,16 +374,42 @@ class DFM():
 
         connections = self.get_connections()
         routes = self.set_cables(connections)
+        # print(f"\nROUTES FROM RUN FUNCTION: {routes}\n")
 
         # total costs:
         total_length_cables = 0
-        for battery, routes in routes.items():
-            for route in routes.values():
+        for battery, battery_routes in routes.items():
+            for route in battery_routes.values():
                 total_length_cables += len(route)
+
         
         number_of_batteries = len(connections.keys())
 
         cost = total_length_cables * 9 + number_of_batteries * 5000
         print(f"Total costs: {cost}")
+
+        adjusted_connections = {}
+        adjusted_routes = {}
+        house_num = 0
+
+        # print()
+        # print(f"ROUTES FROM RUN FUNCTION 2: {routes}")
+
+        # print(f"\n\n\nCONNECTIONS FROM RUN FUNCTION 2: {connections}\n\n")
+
+        for battery, houses in connections.items():
+            # print(battery, houses)
+            # print()
+            for house in houses:
+                adjusted_connections[house_num] = [house.position, battery.position]
+                adjusted_routes[house_num] = routes[battery][house]
+
+                house_num += 1
+
+        # print(f"\n\n adjusted_routes:" , adjusted_routes)
+        # print(f"\n\n adjusted_connections:" , adjusted_connections)
+
+        # self.DrawCase(connections)
+       
         
         return cost, routes, connections

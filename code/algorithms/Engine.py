@@ -52,8 +52,8 @@ class Engine:
             print(total_costs)
 
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
-                case.DrawCase()
+                algo.DrawCase(connections, cable_routes)
+
 
         #print(self.houses) # {0: class, 1: class, ...}
         #print(self.batteries) # {0: class, 1: class, ...}
