@@ -374,7 +374,7 @@ class DFM():
 
         connections = self.get_connections()
         routes = self.set_cables(connections)
-        # print(f"\nROUTES FROM RUN FUNCTION: {routes}\n")
+
 
         # total costs:
         total_length_cables = 0
@@ -392,11 +392,6 @@ class DFM():
         adjusted_routes = {}
         house_num = 0
 
-        # print()
-        # print(f"ROUTES FROM RUN FUNCTION 2: {routes}")
-
-        # print(f"\n\n\nCONNECTIONS FROM RUN FUNCTION 2: {connections}\n\n")
-
         for battery, houses in connections.items():
             # print(battery, houses)
             # print()
@@ -406,10 +401,5 @@ class DFM():
 
                 house_num += 1
 
-        # print(f"\n\n adjusted_routes:" , adjusted_routes)
-        # print(f"\n\n adjusted_connections:" , adjusted_connections)
-
-        # self.DrawCase(connections)
        
-        
         return cost, routes, connections
