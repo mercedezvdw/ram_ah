@@ -113,10 +113,8 @@ class PlotCase():
         # plot batteries
         for coord, color in battery_colors.items():
             plt.scatter(coord[0], coord[1], s = 75, color = color, marker = ',', label = 'battery', zorder = 1)
-
-        for i in range(len(self.batteries)):
-            plt.scatter(self.batteries[i].position[0], self.batteries[i].position[1], s = 75, color = color, marker = ',', label = 'battery', zorder=1)
-
+                
+        
         # Plot cables
         if self.connections is not None:
             for key, route in self.cable_routes.items():

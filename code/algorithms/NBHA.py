@@ -371,6 +371,5 @@ class NBH_A():
         print("Max: ", max(result))
         print("Min: ", min(result))
         
-        print(connections)
         return self.sum_costs, min_cable_routes, connections
         
