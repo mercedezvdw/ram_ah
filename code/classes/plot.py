@@ -117,10 +117,11 @@ class PlotCase():
         # Plot cables
         if self.connections is not None:
             for key, route in self.cable_routes.items():
-                x, y = zip(*route)
-                batt = tuple(self.connections[key][1])
-                color = battery_colors[batt]
-                plt.plot(x, y, color=color, linewidth=0.666, zorder=0)
+                if route != []:
+                    x, y = zip(*route)
+                    batt = tuple(self.connections[key][1])
+                    color = battery_colors[batt]
+                    plt.plot(x, y, color=color, linewidth=0.666, zorder=0)
         
         else:
             for key, route in self.cable_routes.items():

@@ -29,7 +29,7 @@ class NBH_A():
         return capacity
 
 
-    def find_cable_path(self, target_position, cable_routes, batteries, house_output):
+    def find_cable_path(self, target_position, cable_routes, house_output):
         """
         Find the cable path of a coordinate and find the connected battery
         """
@@ -37,7 +37,7 @@ class NBH_A():
             for coordinate in route:
                 if coordinate == target_position:
                     destination = route[-1]
-                    battery = self.find_battery(batteries, destination)
+                    battery = self.find_battery(destination)
                 
                     if battery is not None:
                         check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house_output)
@@ -45,8 +45,8 @@ class NBH_A():
                             return battery
 
                 
-    def find_house(self, houses, target_position):
-        for house in houses.values():
+    def find_house(self, target_position):
+        for house in self.houses.values():
             if house.position == target_position:
                     return house
         return None
@@ -73,12 +73,12 @@ class NBH_A():
         battery.remove_used_capacity(house.max_output)
         assign_again.append(house)
         
-    def best_alternative(self, batteries):
+    def best_alternative(self):
         """
         Check which battery has biggest capacity left
         """
         bench = 0
-        for battery in batteries.values():
+        for battery in self.batteries.values():
             if battery.get_capacity() > bench:
                 bench = battery.get_capacity()
                 best_alternative = battery
@@ -86,41 +86,42 @@ class NBH_A():
         return best_alternative
         
                     
-    def find_closest_battery(self, house, batteries: dict, cable_routes, cables, assign_again):
+    def find_closest_battery(self, house, cable_routes, cables, assign_again):
         """
         For each battery calculate the distance to find the closest battery
         """
         nearest_battery = None
         min_distance = float('inf')
+
         
         while True:
             max_capacity = 0
             battery_full = None
             
-            for i in range(len(batteries)):
+            for i in range(len(self.batteries)):
                 
                 # Check if battery has sufficient capacity
-                capacity = batteries[i].capacity - batteries[i].used_capacity
+                capacity = self.batteries[i].capacity - self.batteries[i].used_capacity
                 used_capacity = capacity - house.max_output
                 
                 if capacity > max_capacity:
                     max_capacity = capacity
-                    battery_full = batteries[i]
+                    battery_full = self.batteries[i]
             
                 if used_capacity > 0:
                     # Calculate distance and choose the battery with the closest distance
-                    distance = self.calculate_distance(house.position, batteries[i].position)
+                    distance = self.calculate_distance(house.position, self.batteries[i].position)
                     if distance < min_distance:
                         min_distance = distance
-                        nearest_battery = batteries[i]
+                        nearest_battery = self.batteries[i]
                 
             if nearest_battery is not None:
                 return nearest_battery
             else:
                 # If there is no battery left with sufficient capacity, undo random connection with battery that has most capacity left
-                best_alternative = self.best_alternative(batteries)   
+                best_alternative = self.best_alternative()   
                 random_house = self.find_connection(cables, best_alternative)
-                random_house_object = self.find_house(self.houses, random_house)
+                random_house_object = self.find_house(random_house)
                 
                 self.undo_connection(random_house_object, best_alternative, cable_routes, assign_again)
                 
@@ -128,7 +129,7 @@ class NBH_A():
                 min_distance = float('inf')
 
 
-    def find_closest_cable(self, cable_routes, house_position, house_output, batteries, cables):
+    def find_closest_cable(self, cable_routes, house_position, house_output, cables):
         min_distance = float('inf')
         closest_cable = None
         connected_battery = None
@@ -145,7 +146,7 @@ class NBH_A():
                     closest_cable = coordinate
                     
                     # Check if it's a battery and if it has sufficient capacity
-                    battery = self.find_battery(batteries, closest_cable)
+                    battery = self.find_battery(closest_cable)
                     if battery is not None:
                         check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house_output)
                         connected_battery = battery
@@ -153,7 +154,7 @@ class NBH_A():
                             return closest_cable, connected_battery
                                 
                     # If it is not a battery, find the connection to the battery
-                    battery = self.find_battery(batteries, destination)
+                    battery = self.find_battery(destination)
                     if battery is not None:
                         check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house_output)
                         if check_capacity > 0:
@@ -169,21 +170,22 @@ class NBH_A():
                     
                     # Keep going until you find the battery
                     for route in list(cable_routes.values()):
-                        if begin == route[0]:
-                            end = route[-1]
-                            battery = self.find_battery(batteries, end)
-                            if battery is not None:
-                                check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house_output)
-                                if check_capacity > 0:
-                                    connected_battery = battery
-                                    return closest_cable, connected_battery
+                        if route != []:
+                            if begin == route[0]:
+                                end = route[-1]
+                                battery = self.find_battery(end)
+                                if battery is not None:
+                                    check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house_output)
+                                    if check_capacity > 0:
+                                        connected_battery = battery
+                                        return closest_cable, connected_battery
+                                    else:
+                                        min_distance = old_min_distance
+                                        closest_cable = coordinate
+                                        connected_battery = None
+                                        break
                                 else:
-                                    min_distance = old_min_distance
-                                    closest_cable = coordinate
-                                    connected_battery = None
-                                    break
-                            else:
-                                begin = end
+                                    begin = end
         return None, None
 
 
@@ -195,33 +197,32 @@ class NBH_A():
         return None
 
 
-    def find_battery(self, batteries, target_position):
-        for battery in batteries.values():
+    def find_battery(self, target_position):
+        for battery in self.batteries.values():
             if battery.position == target_position:
                     return battery
         return None
 
 
-    def compare_results(self, house_position, nearest_battery_position, closest_coordinate):
+    def compare_results(self, house_position, pos1, pos2):
         """
-        Compare the distance between the nearesty battery and choose shortest route
+        Compare the distance between two positions
         """
-        distance1 = self.calculate_distance(house_position, nearest_battery_position)
-        distance2 = self.calculate_distance(house_position, closest_coordinate)
+        distance1 = self.calculate_distance(house_position, pos1)
+        distance2 = self.calculate_distance(house_position, pos2)
             
         if distance1 < distance2:
-            return nearest_battery_position
+            return pos1
         else: 
-            return closest_coordinate
+            return pos2
 
-
-    def check_if_house(self, houses, cable_route):
+    def check_if_house(self, cable_route):
         for route in cable_route[1:]:
-            for house in houses.values():
+            for house in self.houses.values():
                 if house.position == route:
                     return house
 
-    def create_cable_route(self, start_position, end_position, houses, battery):
+    def create_cable_route(self, start_position, end_position, battery):
         """
         Create cable with shortest path (based on heuristics) from start to end position
         """
@@ -261,7 +262,7 @@ class NBH_A():
             current_position = [current_position[0] - 1, current_position[1]]
             cable_route.append(current_position.copy())
             
-        house = self.check_if_house(houses, cable_route)
+        house = self.check_if_house(cable_route)
         
         if house is not None:
             check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house.max_output)
@@ -270,10 +271,22 @@ class NBH_A():
     
         return cable_route
 
-    def reset_batteries(self, batteries):
-        for i in range(len(batteries)):
-            batteries[i].reset_capacity()
-
+    def reset_batteries(self):
+        for i in range(len(self.batteries)):
+            self.batteries[i].reset_capacity()
+            
+    def find_closest_coordinate(self, target_coordinate, cable_route):
+        closest_coordinate = None
+        min_distance = float('inf')
+        
+        for coordinate in cable_route:
+            distance = calculate_distance(target_coordinate, coordinate)
+            if distance < min_distance:
+                min_distance = distance
+                closest_coordinate = coordinate
+        
+        return closest_coordinate
+                
     def get_result(self):
         """
         Execute Nearest Battery Heuristic Algorithm
@@ -285,31 +298,32 @@ class NBH_A():
         assign_again = []
         
         # Reset the battery capacacities
-        self.reset_batteries(self.batteries)
+        self.reset_batteries()
         
         houses_copy = self.houses.copy()
-        random.shuffle(houses_copy)
+        # random.shuffle(houses_copy)
         
         for i in range(len(houses_copy)):
             # Check if there is already a cable path through this house
-            path = self.find_cable_path(houses_copy[i].position, cable_routes, self.batteries, houses_copy[i].max_output)
+            path = self.find_cable_path(houses_copy[i].position, cable_routes, houses_copy[i].max_output)
             if path is not None:
-                connection = path.position
+                match = path.position
                 closest_option = None
                 route_costs = 0
+                cable_route = [houses_copy[i].position]
 
             else:
                 # Find closest battery with sufficient capacity
-                closest_battery = self.find_closest_battery(houses_copy[i], self.batteries, cable_routes, cables, assign_again)
+                closest_battery = self.find_closest_battery(houses_copy[i], cable_routes, cables, assign_again)
                 
                 # Find the closest cable and which battery it is connected to
-                closest_cable, connected_battery = self.find_closest_cable(cable_routes, houses_copy[i].position, houses_copy[i].max_output, self.batteries, cables)
+                closest_cable, connected_battery = self.find_closest_cable(cable_routes, houses_copy[i].position, houses_copy[i].max_output, cables)
 
                 # If there is no cable to connect to, there comes a new cable to the closest battery
                 if closest_cable is None:
                     closest_option = closest_battery.position
-                    connection = closest_battery.position
-                    cable_route = self.create_cable_route(houses_copy[i].position, closest_battery.position, houses_copy, closest_battery)
+                    match = closest_battery.position
+                    cable_route = self.create_cable_route(houses_copy[i].position, closest_battery.position, closest_battery)
 
                 # Compare the closest cable and the closest battery to decide which option is more close
                 else:
@@ -317,33 +331,79 @@ class NBH_A():
 
                     # If the battery itself is closer, the cable will be connected to the closest battery
                     if closest_option == closest_battery.position:
-                        connection = closest_battery.position
-                        cable_route = self.create_cable_route(houses_copy[i].position, closest_battery.position, houses_copy, closest_battery)
+                        match = closest_battery.position
+                        cable_route = self.create_cable_route(houses_copy[i].position, closest_battery.position, closest_battery)
 
                     # If not, the connected battery is from the closest cable
                     else:
-                        cable_route = self.create_cable_route(houses_copy[i].position, closest_option, houses_copy, connected_battery)
-                        connection = connected_battery.position
+                        cable_route = self.create_cable_route(houses_copy[i].position, closest_option, connected_battery)
+                        match = connected_battery.position
                 
                 route_costs = (len(cable_route) - 1) * 9
-                cable_routes[i] = cable_route
-                connections[i] = [houses_copy[i].position, connection]
             
-            # Add houses from 'assign again' to the for loop
-            for j in range(len(assign_again)):
-                houses_copy[i + j] = assign_again[j - 1]
-                del assign_again[j - 1]
-                j += 1
-            
-            cables[i] = CableSegment(houses_copy[i].position, connection, route_costs)
+            cable_routes[i] = cable_route
+            connections[i] = [houses_copy[i].position, match]
+            cables[i] = CableSegment(houses_copy[i].position, match, route_costs)
             sum_costs += route_costs
             
             # Add capacity of house to used capacity of the connected battery
-            battery = self.find_battery(self.batteries, connection)
+            battery = self.find_battery(match)
             battery.add_used_capacity(houses_copy[i].max_output)
-
-        self.sum_costs = sum_costs
         
+        j = 150
+        
+        while len(assign_again) != 0: 
+            for i in range(len(assign_again)):
+                house = assign_again[i]
+                
+                # Check if there is already a cable path through this house
+                path = self.find_cable_path(house.position, cable_routes, house.max_output)
+                if path is not None:
+                    match = path.position
+                    closest_option = None
+                    route_costs = 0
+                    cable_route = [houses_copy[i].position]
+
+                else:
+                    # Find closest battery with sufficient capacity
+                    closest_battery = self.find_closest_battery(house, cable_routes, cables, assign_again)
+                    
+                    # Find the closest cable and which battery it is connected to
+                    closest_cable, connected_battery = self.find_closest_cable(cable_routes, house.position, house.max_output, cables)
+
+                    # If there is no cable to connect to, there comes a new cable to the closest battery
+                    if closest_cable is None:
+                        closest_option = closest_battery.position
+                        match = closest_battery.position
+                        cable_route = self.create_cable_route(house.position, closest_battery.position, closest_battery)
+
+                    # Compare the closest cable and the closest battery to decide which option is more close
+                    else:
+                        closest_option = self.compare_results(house.position, closest_battery.position, closest_cable)
+
+                        # If the battery itself is closer, the cable will be connected to the closest battery
+                        if closest_option == closest_battery.position:
+                            match = closest_battery.position
+                            cable_route = self.create_cable_route(house.position, closest_battery.position, closest_battery)
+
+                        # If not, the connected battery is from the closest cable
+                        else:
+                            cable_route = self.create_cable_route(house.position, closest_option, connected_battery)
+                            match = connected_battery.position
+                
+                    route_costs = (len(cable_route) - 1) * 9
+            
+                cable_routes[j+i] = cable_route
+                connections[j+i] = [house.position, match]
+                cables[j+i] = CableSegment(house.position, match, route_costs)
+                sum_costs += route_costs
+            
+                # Add capacity of house to used capacity of the connected battery
+                battery = self.find_battery(match)
+                battery.add_used_capacity(house.max_output)
+                
+                assign_again.pop(i)
+                
         # Make sure all houses are assigned and connected to a battery
         if assign_again == []:
             return cables, cable_routes, sum_costs, connections
@@ -358,7 +418,7 @@ class NBH_A():
         min_cable_routes = None
         
         # Run 1000 iterations
-        for i in range(10):
+        for i in range(1):
             cables, cable_routes, sum_costs, connections = self.get_result()
             result.append(sum_costs)
             
@@ -370,6 +430,6 @@ class NBH_A():
         print("Median: ", np.median(result))
         print("Max: ", max(result))
         print("Min: ", min(result))
-        
-        return self.sum_costs, min_cable_routes, connections
+
+        return sum_costs, min_cable_routes, connections
         

@@ -22,6 +22,7 @@ class WriteData():
             bat_pos_str = f"{batteries[i].position[0]},{batteries[i].position[1]}"
             houses_per_battery = []
             # if functioning correctly, len(houses) == len(cable_routes)
+            
             for j in range(len(houses)):
                 house_pos_str = f"{houses[j].position[0]},{houses[j].position[1]}"
                 house_connection_pos = f"{connections[j][0][0]},{connections[j][0][1]}"
@@ -32,7 +33,7 @@ class WriteData():
                 if bat_pos_str == battery_connection_pos:
                     # make a list of strings from the route
                     route = []
-                    if len(cable_routes[j]):
+                    if cable_routes.get(j) is not None and len(cable_routes[j]):
                         for k in range(len(cable_routes[j])):
                             route_str = f"{cable_routes[j][k][0]},{cable_routes[j][k][1]}"
                             route.append(route_str)
