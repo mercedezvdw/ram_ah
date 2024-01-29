@@ -20,13 +20,14 @@ class Engine:
     def run(self):
         RD = ReadData(self.district,self.algo)
         WD = WriteData(self.district,self.algo)
+        connections = None
 
         if self.algo == "Rv2":
             algo = Rv2(self.batteries, self.houses)
             total_costs, cable_routes = algo.run()
             
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes)
+                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
                 case.DrawCase()
 
         elif self.algo == "SADDA":
@@ -34,15 +35,15 @@ class Engine:
             total_costs, cable_routes = sad.SADDA_Run()
 
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes)
+                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
                 case.DrawCase()
 
         elif self.algo == "NBHA":
             algo = NBH_A(self.batteries, self.houses)
-            total_costs, cable_routes = algo.run()
+            total_costs, cable_routes, connections = algo.run()
 
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes)
+                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
                 case.DrawCase()
 
         elif self.algo == "KNN":
@@ -50,7 +51,7 @@ class Engine:
             cable_routes = algo.run()
 
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes)
+                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
                 case.DrawCase()
 
         #print(self.houses) # {0: class, 1: class, ...}

@@ -8,7 +8,7 @@ from code.algorithms.randomise import *
 from code.algorithms.DCA import DensityComputation
 
 class PlotCase():
-    def __init__(self, batteries, houses, extraGridSpace, cable_routes):
+    def __init__(self, batteries, houses, extraGridSpace, cable_routes, connections):
         """
         Initialsize all variables needed to plot a district map
         """
@@ -16,7 +16,21 @@ class PlotCase():
         self.houses = houses
         self.extraGridSpace = extraGridSpace
         self.cable_routes = cable_routes
+        self.connections = connections
+        self.battery_colors = {}
         #print(cable_routes)
+    
+    def AssignBatteryColors(self):
+        battery_colors = {}
+        colors = ['deepskyblue', 'darkorange', 'forestgreen', 'deeppink', 'mediumpurple']
+        i = 0
+        
+        for battery in self.batteries.values():
+            x = tuple(battery.position)
+            battery_colors[x] = colors[i]
+            i += 1
+        
+        return battery_colors
 
     def DrawCase(self):
         """
@@ -73,25 +87,49 @@ class PlotCase():
         # plot grid lines
         for i in range(-self.extraGridSpace, GridSize+1 +self.extraGridSpace):
             # I used int()+1 so it is rounded up, int always rounds down
-            plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.2, zorder=-1)
-            plt.hlines(y = i + int(yCenter - GridSize/2)+1, xmin = int(xCenter - GridSize/2)+1-5, xmax = int(xCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.2, zorder=-1)
+            plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.1, zorder=-1)
+            plt.hlines(y = i + int(yCenter - GridSize/2)+1, xmin = int(xCenter - GridSize/2)+1-5, xmax = int(xCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.1, zorder=-1)
         
         # Delete labels from x and y axis
         plt.xticks([])
         plt.yticks([])
         
+        
+        battery_colors = self.AssignBatteryColors()
+        
         # plot houses
-        for i in range(len(self.houses)):
-            plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 75, color = 'r', marker = '^', label = 'house', zorder=1)
+        if self.connections is not None:
+            for i in range(len(self.houses)):
+                for key, connection in self.connections.items():
+                    if self.houses[i].position in connection:
+                        batt = tuple(connection[1])
+                        color = battery_colors[batt]
+                plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 75, color = color, marker = '^', label = 'house', zorder=1)
+        
+        else:
+            for i in range(len(self.houses)):
+                plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 75, color = 'r', marker = '^', label = 'house', zorder=1)
             
         # plot batteries
+        for coord, color in battery_colors.items():
+            plt.scatter(coord[0], coord[1], s = 75, color = color, marker = ',', label = 'battery', zorder = 1)
+
         for i in range(len(self.batteries)):
-            plt.scatter(self.batteries[i].position[0], self.batteries[i].position[1], s = 75, color = 'g', marker = ',', label = 'battery', zorder=1)
+            plt.scatter(self.batteries[i].position[0], self.batteries[i].position[1], s = 75, color = color, marker = ',', label = 'battery', zorder=1)
 
         # Plot cables
-        for key, route in self.cable_routes.items():
-            x, y = zip(*route)
-            plt.plot(x, y, color='b', linewidth=0.666, zorder=0)
+        if self.connections is not None:
+            for key, route in self.cable_routes.items():
+                x, y = zip(*route)
+                batt = tuple(self.connections[key][1])
+                color = battery_colors[batt]
+                plt.plot(x, y, color=color, linewidth=0.666, zorder=0)
+        
+        else:
+            for key, route in self.cable_routes.items():
+                x, y = zip(*route)
+                plt.plot(x, y, color='b', linewidth=0.666, zorder=0)
+            
         
         # drawing details
         plt.xlim(-1,GridSize+1)

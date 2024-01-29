@@ -280,21 +280,15 @@ class NBH_A():
         """
         cables = {}
         cable_routes = {}
+        connections = {}
         sum_costs = 5000 * (len(self.batteries))
         assign_again = []
         
         # Reset the battery capacacities
         self.reset_batteries(self.batteries)
-
-        houses_items = list(self.houses.items())
-        houses_items.sort(key=lambda item: item[1].max_output)
-        sorted_houses = dict(houses_items)
         
         houses_copy = self.houses.copy()
-        # # Random choice of order to assign each house to a cable
-        # shuffled_indexes = list(range(len(houses)))
         random.shuffle(houses_copy)
-        # print(shuffled_indexes)
         
         for i in range(len(houses_copy)):
             # Check if there is already a cable path through this house
@@ -333,6 +327,7 @@ class NBH_A():
                 
                 route_costs = (len(cable_route) - 1) * 9
                 cable_routes[i] = cable_route
+                connections[i] = [houses_copy[i].position, connection]
             
             # Add houses from 'assign again' to the for loop
             for j in range(len(assign_again)):
@@ -348,11 +343,11 @@ class NBH_A():
             battery.add_used_capacity(houses_copy[i].max_output)
 
         self.sum_costs = sum_costs
+        
         # Make sure all houses are assigned and connected to a battery
         if assign_again == []:
-            return cables, cable_routes, sum_costs
-        
-                
+            return cables, cable_routes, sum_costs, connections
+    
     def run(self):
         """
         Execute Nearest Battery Heuristic Algorithm
@@ -364,7 +359,7 @@ class NBH_A():
         
         # Run 1000 iterations
         for i in range(10):
-            cables, cable_routes, sum_costs = self.get_result()
+            cables, cable_routes, sum_costs, connections = self.get_result()
             result.append(sum_costs)
             
             # Plot the best iteration
@@ -376,5 +371,5 @@ class NBH_A():
         print("Max: ", max(result))
         print("Min: ", min(result))
         
-        return self.sum_costs, min_cable_routes
+        return self.sum_costs, min_cable_routes, connections
         
