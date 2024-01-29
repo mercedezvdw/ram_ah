@@ -27,7 +27,7 @@ class WriteData():
                 house_connection_pos = f"{connections[j][0][0]},{connections[j][0][1]}"
                 battery_connection_pos = f"{connections[j][1][0]},{connections[j][1][1]}"
                 house_output = f"{houses[j].max_output}"
-                print(house_pos_str, battery_connection_pos)
+                #print(house_pos_str, battery_connection_pos)
                 # check if the current house truly goes to this battery
                 if bat_pos_str == battery_connection_pos:
                     # make a list of strings from the route
