@@ -281,24 +281,26 @@ class SADDA():
         ####
         #/ ---------------------------------------------------------- IMPORTANT
         # cables overlap, so check the cable segment lists to check where there are overlapping segments and remove all but 1
-            
-        # once all cables have been placed, check if there is any overlap of cables:
-        # make new dicts and store the corrected data in these
-        overlap_cable_segments = self.check_for_overlap(cable_routes)
-        print(overlap_cable_segments)
-        #print(cable_routes)
-        # go through each route and eliminate all segments that are overlapping
+        
+        # go through all routes and eliminate overlapping cables
+        # and also recalc the price
+        sum_costs = 5000 * (len(self.BatteryPosList))
+
         non_overlap_cable_routes = {}
+        used_segments = []
         for i in range(len(cable_routes)):
             route_list = []
             route_list.append(cable_routes[i][0])
             for j in range(len(cable_routes[i])-1):
-                if ([cable_routes[i][j], cable_routes[i][j+1]] not in overlap_cable_segments):
+                # check if this segments has been used before,
+                # if not, place the segment and assign this to already used segments, so it cannot be used again
+                if ([cable_routes[i][j], cable_routes[i][j+1]] not in used_segments):
+                    used_segments.append([cable_routes[i][j], cable_routes[i][j+1]])
                     route_list.append(cable_routes[i][j+1])
                     # remove 9 for each segment removed
-                    sum_costs -= 9
+                    sum_costs += 9
             non_overlap_cable_routes[i] = route_list
-        print(non_overlap_cable_routes)
+        #print(non_overlap_cable_routes)
         # now that we have all unique cable segments, we need to alter the original overlapping data to get a start to finish coord list for each house to battery
         # for now just using vccable_routes works, but we need non overlapping data, so per house battery connection the unique part of each,
         # if the coords have been shown before, just do the next one up to when it shows 1 coord pair
