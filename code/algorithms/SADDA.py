@@ -300,6 +300,6 @@ class SADDA():
         #    print(f'capacity of battery at {self.BatteryPosList[i].position}: {self.BatteryPosList[i].capacity}, used capacity: {self.BatteryPosList[i].get_capacity()}')
 
         connections = self.make_connections()
-        print(connections)
+        #print(connections)
         #return cables, non_overlap_cable_routes
         return sum_costs, cable_routes, connections
