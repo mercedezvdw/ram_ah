@@ -40,7 +40,8 @@ class Engine:
 
         elif self.algo == "NBHA":
             algo = NBH_A(self.batteries, self.houses)
-            total_costs, cable_routes, connections = algo.run()
+            total_costs, cable_routes, connections, houses_shuffled = algo.run()
+            self.houses = houses_shuffled
 
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)

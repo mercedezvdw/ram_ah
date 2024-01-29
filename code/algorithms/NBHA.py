@@ -67,11 +67,14 @@ class NBH_A():
                 matching_cable = cable
                 return matching_cable
 
-    def undo_connection(self, house, battery, cable_routes, assign_again):
+    def undo_connection(self, house, battery, cable_routes, assign_again, connections):
         matching_cable = self.find_cable_route(house.position, battery.position, cable_routes)
         del cable_routes[matching_cable]
+        del connections[matching_cable]
         battery.remove_used_capacity(house.max_output)
-        assign_again.append(house)
+        assign_again[matching_cable] = house
+        
+        return matching_cable
         
     def best_alternative(self):
         """
@@ -86,7 +89,7 @@ class NBH_A():
         return best_alternative
         
                     
-    def find_closest_battery(self, house, cable_routes, cables, assign_again):
+    def find_closest_battery(self, house, cable_routes, cables, assign_again, connections):
         """
         For each battery calculate the distance to find the closest battery
         """
@@ -123,7 +126,7 @@ class NBH_A():
                 random_house = self.find_connection(cables, best_alternative)
                 random_house_object = self.find_house(random_house)
                 
-                self.undo_connection(random_house_object, best_alternative, cable_routes, assign_again)
+                self.undo_connection(random_house_object, best_alternative, cable_routes, assign_again, connections)
                 
                 # Reset min_distance for the next iteration
                 min_distance = float('inf')
@@ -295,13 +298,13 @@ class NBH_A():
         cable_routes = {}
         connections = {}
         sum_costs = 5000 * (len(self.batteries))
-        assign_again = []
+        assign_again = {}
         
         # Reset the battery capacacities
         self.reset_batteries()
         
         houses_copy = self.houses.copy()
-        # random.shuffle(houses_copy)
+        random.shuffle(houses_copy)
         
         for i in range(len(houses_copy)):
             # Check if there is already a cable path through this house
@@ -314,7 +317,7 @@ class NBH_A():
 
             else:
                 # Find closest battery with sufficient capacity
-                closest_battery = self.find_closest_battery(houses_copy[i], cable_routes, cables, assign_again)
+                closest_battery = self.find_closest_battery(houses_copy[i], cable_routes, cables, assign_again, connections)
                 
                 # Find the closest cable and which battery it is connected to
                 closest_cable, connected_battery = self.find_closest_cable(cable_routes, houses_copy[i].position, houses_copy[i].max_output, cables)
@@ -353,8 +356,8 @@ class NBH_A():
         j = 150
         
         while len(assign_again) != 0: 
-            for i in range(len(assign_again)):
-                house = assign_again[i]
+            for key, house in assign_again.copy().items():
+                house = assign_again[key]
                 
                 # Check if there is already a cable path through this house
                 path = self.find_cable_path(house.position, cable_routes, house.max_output)
@@ -362,11 +365,11 @@ class NBH_A():
                     match = path.position
                     closest_option = None
                     route_costs = 0
-                    cable_route = [houses_copy[i].position]
+                    cable_route = [house.position]
 
                 else:
                     # Find closest battery with sufficient capacity
-                    closest_battery = self.find_closest_battery(house, cable_routes, cables, assign_again)
+                    closest_battery = self.find_closest_battery(house, cable_routes, cables, assign_again, connections)
                     
                     # Find the closest cable and which battery it is connected to
                     closest_cable, connected_battery = self.find_closest_cable(cable_routes, house.position, house.max_output, cables)
@@ -393,20 +396,20 @@ class NBH_A():
                 
                     route_costs = (len(cable_route) - 1) * 9
             
-                cable_routes[j+i] = cable_route
-                connections[j+i] = [house.position, match]
-                cables[j+i] = CableSegment(house.position, match, route_costs)
+                cable_routes[key] = cable_route
+                connections[key] = [house.position, match]
+                cables[key] = CableSegment(house.position, match, route_costs)
                 sum_costs += route_costs
             
                 # Add capacity of house to used capacity of the connected battery
                 battery = self.find_battery(match)
                 battery.add_used_capacity(house.max_output)
                 
-                assign_again.pop(i)
+                del assign_again[key]
+        
+        houses_shuffled = houses_copy
                 
-        # Make sure all houses are assigned and connected to a battery
-        if assign_again == []:
-            return cables, cable_routes, sum_costs, connections
+        return cables, cable_routes, sum_costs, connections, houses_shuffled
     
     def run(self):
         """
@@ -416,20 +419,23 @@ class NBH_A():
         min_costs = float('inf')
         min_cables = None
         min_cable_routes = None
+        total_costs = None
         
         # Run 1000 iterations
-        for i in range(1):
-            cables, cable_routes, sum_costs, connections = self.get_result()
+        for i in range(100):
+            cables, cable_routes, sum_costs, connections, houses_shuffled = self.get_result()
             result.append(sum_costs)
             
             # Plot the best iteration
             if sum_costs < min_costs:
+                min_costs = sum_costs
                 min_cable_routes = cable_routes
+                total_costs = sum_costs
         
         print("Average: ", (sum(result)/len(result)))
         print("Median: ", np.median(result))
         print("Max: ", max(result))
         print("Min: ", min(result))
 
-        return sum_costs, min_cable_routes, connections
+        return total_costs, min_cable_routes, connections, houses_shuffled
         
