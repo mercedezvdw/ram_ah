@@ -1,7 +1,7 @@
 from code.algorithms.Rv2 import Rv2
 from code.algorithms.SADDA import SADDA
 from code.algorithms.NBHA import NBH_A
-from code.algorithms.knn import KNN
+from code.algorithms.DFM import DFM
 from code.classes.readCSV import CSVReader
 from code.classes.plot import PlotCase
 from code.classes.readData import ReadData
@@ -46,9 +46,10 @@ class Engine:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
                 case.DrawCase()
 
-        elif self.algo == "KNN":
-            algo = KNN(self.batteries, self.houses)
-            cable_routes = algo.run()
+        elif self.algo == "DFM":
+            algo = DFM(self.batteries, self.houses)
+            total_costs, cable_routes, connections = algo.run()
+            print(total_costs)
 
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)

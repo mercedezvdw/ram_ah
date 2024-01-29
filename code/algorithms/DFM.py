@@ -1,12 +1,17 @@
+# Yessin Radouane, Team RAM
+# Depth First Mycelium Algorithm (DFM) (Finds furthest house from battery and the house furthest from that house, connects them with a cable, then connects the rest of the houses to the closest cable or battery)
+
 import math
 from matplotlib import pyplot as plt
 
-class KNN():
+class DFM():
 
     def __init__(self, batteries, houses):
         
         self.batteries = batteries
         self.houses = houses
+        self.furthest_house = None
+        self.furthest_from_furthest_house = None
 
     def calculate_distance(self, c1, c2):
         """
@@ -120,7 +125,7 @@ class KNN():
         current pos: tuple
         end pos: list
         """
-        print(f"Generating route from {start_position} to {end_position}")
+        # print(f"Generating route from {start_position} to {end_position}")
         
         
         current_position = start_position
@@ -160,7 +165,7 @@ class KNN():
                 current_position = new_position
                 route.append(current_position)
 
-        print(route)
+        # print(route)
         return route
         
 
@@ -173,6 +178,8 @@ class KNN():
         furthest_from_furthest_house = None
         second_distance = 0
                 
+    
+        # Creaste base cables for furthest house and furthest house from this house
         for battery in connections.keys():
             for house in connections[battery]:
                 distance = self.calculate_distance(battery.position, house.position)
@@ -192,9 +199,66 @@ class KNN():
             routes[battery] = {}
             routes[battery]["furthest_house"] = furthest_route
             routes[battery]["second_furthest_house"] = second_furthest_route
+    
+        # print(routes)
 
-        print(routes)
+        # now to connect the rest of the houses per battery
+        # go depth first, so find the furthes house and connect to closest cable or linked battery
+
+        for battery in connections.keys():
+            unconnected_houses = [house for house in connections[battery] if house not in [furthest_house, furthest_from_furthest_house]]
+               
+            # find furthest house from battery and make routes until all houses are connected
+            while len(unconnected_houses) > 0:
+                furthest_house = None
+                longest_distance = 0
+                for house in unconnected_houses:
+                    distance = self.calculate_distance(battery.position, house.position)
+                    if distance > longest_distance:
+                        longest_distance = distance
+                        furthest_house = house
+    
+                # find closest cable or linked battery
+                smallest_distance_cable = 1e9
+                distance_battery = None
+                closest_cable = None
+                for route in routes[battery].values():
+
+                    #find closest cable
+                    for cable in route:
+                        distance = self.calculate_distance(cable, furthest_house.position)
+                        if distance < smallest_distance_cable:
+                            smallest_distance_cable = distance
+                            closest_cable = cable
+
+                # find closest battery
+                distance_battery = self.calculate_distance(battery.position, furthest_house.position)
+
+                if distance_battery < smallest_distance_cable:
+                    # connect to battery
+                    route = self.generate_routes(battery.position, furthest_house.position)
+
+                    # add route to routes
+                    routes[battery][furthest_house] = route
+
+
+                    # remove house from unconnected houses
+                    unconnected_houses.remove(furthest_house)
+
+                else:
+                    # connect to closest cable
+                    route = self.generate_routes(closest_cable, furthest_house.position)
+
+                    # add route to routes
+                    routes[battery][furthest_house] = route
+
+                    # remove house from unconnected houses
+                    unconnected_houses.remove(furthest_house)
+                        
+
         return routes
+
+
     
 
 
@@ -226,37 +290,52 @@ class KNN():
                     if route_key in routes[battery]:
                         route = routes[battery][route_key]
                         x, y = zip(*route)  # Extract x and y coordinates
-                        plt.plot(x, y, color=color, linewidth=0.666, zorder=0)
+                        plt.plot(x, y, color=color, linewidth=2, zorder=0)
+
+                # rest of the cables
+                for house, route in routes[battery].items():
+                    if house not in ['furthest_house', 'second_furthest_house']:
+                        x, y = zip(*route)
+                        plt.plot(x, y, color=color, linewidth=0.66, zorder=0)
 
             idx += 1
 
+        # total costs:
+        total_length_cables = 0
+        for battery, routes in routes.items():
+            for route in routes.values():
+                total_length_cables += len(route)
+        
+        number_of_batteries = len(connections.keys())
+
+        cost = total_length_cables * 9 + number_of_batteries * 5000
+        print(f"Total costs: {cost}")
+
         # Drawing details
-        plt.xlabel('X Coordinate')
-        plt.ylabel('Y Coordinate')
-        plt.title('Map of District with Houses and Batteries')
-        plt.legend()
-        plt.axis('equal')
-        plt.show()
+        # plt.xlabel('X Coordinate')
+        # plt.ylabel('Y Coordinate')
+        # plt.title('Map of District with Houses and Batteries')
+        # plt.legend()
+        # plt.axis('equal')
+        # plt.show()
 
 
 
 
     def run(self):
-        ## divide houses per battery, find furthest house from battery, connect to battery
-        ## find house furthest away from chosen house, connect to battery
-        ## connect all other houses to these 2 cables
-
-        for key, house in self.houses.items():
-            print(house.position)
-
-        print()
-
-        for key, battery in self.batteries.items():
-            print(battery.position)
-    
-        print(self.batteries)
 
         connections = self.get_connections()
-        # print(connections)
-        self.DrawCase(connections)
-        return {}
+        routes = self.set_cables(connections)
+
+        # total costs:
+        total_length_cables = 0
+        for battery, routes in routes.items():
+            for route in routes.values():
+                total_length_cables += len(route)
+        
+        number_of_batteries = len(connections.keys())
+
+        cost = total_length_cables * 9 + number_of_batteries * 5000
+        print(f"Total costs: {cost}")
+        
+        return cost, routes, connections
