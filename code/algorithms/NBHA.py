@@ -419,6 +419,7 @@ class NBH_A():
         min_costs = float('inf')
         min_cables = None
         min_cable_routes = None
+        min_connections = None
         total_costs = None
         
         # Run 1000 iterations
@@ -431,11 +432,13 @@ class NBH_A():
                 min_costs = sum_costs
                 min_cable_routes = cable_routes
                 total_costs = sum_costs
+                min_connections = connections
+                
         
         print("Average: ", (sum(result)/len(result)))
         print("Median: ", np.median(result))
         print("Max: ", max(result))
         print("Min: ", min(result))
 
-        return total_costs, min_cable_routes, connections, houses_shuffled
+        return total_costs, min_cable_routes, min_connections, houses_shuffled
         
