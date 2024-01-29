@@ -94,7 +94,6 @@ class PlotCase():
         plt.xticks([])
         plt.yticks([])
         
-        
         battery_colors = self.AssignBatteryColors()
         
         # plot houses
@@ -104,15 +103,15 @@ class PlotCase():
                     if self.houses[i].position in connection:
                         batt = tuple(connection[1])
                         color = battery_colors[batt]
-                plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 75, color = color, marker = '^', label = 'house', zorder=1)
+                plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 30, color = color, marker = '^', label = 'house', zorder=1)
         
         else:
             for i in range(len(self.houses)):
-                plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 75, color = 'r', marker = '^', label = 'house', zorder=1)
+                plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 30, color = 'r', marker = '^', label = 'house', zorder=1)
             
         # plot batteries
         for coord, color in battery_colors.items():
-            plt.scatter(coord[0], coord[1], s = 75, color = color, marker = ',', label = 'battery', zorder = 1)
+            plt.scatter(coord[0], coord[1], s = 55, color = color, marker = ',', label = 'battery', zorder = 1)
                 
         
         # Plot cables
