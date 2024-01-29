@@ -65,8 +65,9 @@ class ReadData():
         
         #print(batteries)
         #print(houses)
+        connections = None
 
-        return total_costs, houses, batteries, cable_routes
+        return total_costs, houses, batteries, cable_routes, connections
 
     
     def ReadBestResult(self):

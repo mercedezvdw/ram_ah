@@ -32,7 +32,7 @@ class Engine:
 
         elif self.algo == "SADDA":
             sad = SADDA(self.batteries, self.houses)
-            total_costs, cable_routes = sad.SADDA_Run()
+            total_costs, cable_routes, connections = sad.SADDA_Run()
 
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
@@ -57,6 +57,6 @@ class Engine:
         #print(self.houses) # {0: class, 1: class, ...}
         #print(self.batteries) # {0: class, 1: class, ...}
         #print(cable_routes) # {0: [[xbegin,ybegin], [xend,yend]], 1: [[xbegin,ybegin], [xend,yend]], ...}
-        WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes)
-        total_costs_N, houses_N, batteries_N, cable_routes_N = RD.ReadExperimentData()
+        WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes, connections)
+        total_costs_N, houses_N, batteries_N, cable_routes_N, connections_N = RD.ReadExperimentData()
         # when the house-battery assigning works correctly, these read dicts will be the same as the written ones

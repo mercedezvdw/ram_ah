@@ -160,7 +160,7 @@ class SADDA():
         connections = {}
         
         for i in range(len(self.HBC)):            
-            connections[self.HousePosList[self.HBC[i][0]]] = self.BatteryPosList[self.HBC[i][1]]
+            connections[i] = [self.HousePosList[self.HBC[i][0]].position, self.BatteryPosList[self.HBC[i][1]].position]
         
         return connections
 
@@ -299,7 +299,7 @@ class SADDA():
         #for i in range(len(self.BatteryPosList)):
         #    print(f'capacity of battery at {self.BatteryPosList[i].position}: {self.BatteryPosList[i].capacity}, used capacity: {self.BatteryPosList[i].get_capacity()}')
 
-        
-
+        connections = self.make_connections()
+        print(connections)
         #return cables, non_overlap_cable_routes
-        return sum_costs, cable_routes
+        return sum_costs, cable_routes, connections
