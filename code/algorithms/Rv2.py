@@ -37,6 +37,7 @@ class Rv2():
             choice = random.choice(all_batteries)
             
             connections[house] = choice
+            choice.capacity -= house.max_output
         
         return connections
 
@@ -143,27 +144,50 @@ class Rv2():
     
 
     def run(self):
-        result = []
-        for i in range(1,1000):
-            
-            connections = self.make_connections()
-            cables = {}
-            cable_routes = {}
 
-            for house, battery in connections.items():
-                cables[house] = CableSegment(house.position, battery.position, 9)
-                cable_routes[house] = self.generate_routes(house.position, battery.position)
+        connections = self.make_connections()
+        # print(f"Connections: {connections}\n\n")
+        cables = {}
+        cable_routes = {}
 
-            # print(cable_routes)
-            _sum = 0
-            for house, route in cable_routes.items():
-                _sum += len(route)
+        for house, battery in connections.items():
+            cables[house] = CableSegment(house.position, battery.position, 9)
+            cable_routes[house] = self.generate_routes(house.position, battery.position)
+
+
+            # print(f"cable_routes: {cable_routes}\n\n")
+            # print(f"cables: {cables}\n\n")
+        _sum = 0
+        for house, route in cable_routes.items():
+            _sum += len(route)
+
+        total_cost = _sum * 9 + 5000 * len(self.batteries)
+        print("Total cost: ", total_cost)
             # print(_sum)
-            result.append(_sum)
+            # result.append(_sum)
 
-        print("Average: ", (sum(result)/len(result))*9 + 25000)
-        print("Median: ", np.median(result)*9 + 25000)
-        print("Max: ", max(result)*9 + 25000)
-        print("Min: ", min(result)*9 + 25000)
+        # print("Average: ", (sum(result)/len(result))*9 + 25000)
+        # print("Median: ", np.median(result)*9 + 25000)
+        # print("Max: ", max(result)*9 + 25000)
+        # print("Min: ", min(result)*9 + 25000)
 
-        return cables, cable_routes
+        for num, battery in self.batteries.items():
+            print(battery.capacity)
+
+    
+        adjusted_connections = {}
+        house_idx = 0
+        for house, battery in connections.items():
+            adjusted_connections[house_idx] = [house.position, battery.position]
+            house_idx += 1
+
+        adjusted_cable_routes = {}
+        cable_idx = 0
+        for house, route in cable_routes.items():
+            adjusted_cable_routes[cable_idx] = route
+            cable_idx += 1
+
+        # print(f"Connections {adjusted_connections}\n\n Cable routes {adjusted_cable_routes}\n\n Total cost {total_cost}")
+
+
+        return adjusted_connections, adjusted_cable_routes, total_cost

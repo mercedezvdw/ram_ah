@@ -3,6 +3,7 @@
 
 import math
 from matplotlib import pyplot as plt
+import numpy as np
 
 class DFM():
 
@@ -20,10 +21,134 @@ class DFM():
         distance = math.sqrt(((c1[0] - c2[0]) ** 2) + ((c1[1] - c2[1]) ** 2))
         return distance
     
+    def connect_house(self, house, battery, connections):
+        """Connect a house to a battery."""
+        if battery not in connections:
+            connections[battery] = []
+        connections[battery].append(house)
+        battery.capacity -= house.max_output
+
+    def disconnect_house(self, house, battery, connections):
+        """Disconnect a house from a battery."""
+        connections[battery].remove(house)
+        battery.capacity += house.max_output
+
+    def switch_houses(self, house_to_disconnect, house_to_connect, battery, alt_battery, connections):
+        """Switch a house from one battery to another."""
+        connections[battery].remove(house_to_disconnect)
+        battery.capacity += house_to_disconnect.max_output
+        self.connect_house(house_to_connect, alt_battery, connections)
+
+    def find_key_by_value(self, house_object):
+        for key, value in self.houses.items():
+            if value == house_object:
+                return key
+        return None
+
+    
+    # def get_connections(self):
+    #     connections = {}
+    #     distances = {}
+    #     unconnected_houses = set(self.houses.keys())
+
+    #     # Calculate distance from house to each battery and sort batteries by distance for each house
+    #     for house_num, house in self.houses.items():
+    #         distances[house] = sorted(
+    #             self.batteries.items(),
+    #             key=lambda item: self.calculate_distance(house.position, item[1].position)
+    #         )
+
+    #     # Group houses per battery based on distance, account for capacity
+    #     for house_num, house in self.houses.items():
+    #         for battery_num, battery in distances[house]:
+    #             if battery.capacity >= house.max_output:
+    #                 if battery not in connections:
+    #                     connections[battery] = []
+    #                 connections[battery].append(house)
+    #                 battery.capacity -= house.max_output
+    #                 unconnected_houses.remove(house_num)
+    #                 break
+
+    #     for battery in connections.keys():
+    #         print(f"{battery.capacity} capacity left in battery {battery.position}")
+
+    #     # print unconected houses
+    #     print(f"Unconnected houses: {unconnected_houses}")
+    #     for house in unconnected_houses:
+    #         print(f"House {house} at {self.houses[house].position} with max output {self.houses[house].max_output} could not be connected")
+
+    #     # Attempt to connect unconnected houses
+    #     print(f"\n\n MAKING SWITCHES \n\n")
+    #     for house_num in list(unconnected_houses):
+    #         house = self.houses[house_num]
+    #         for battery_num, battery in distances[house]:
+    #             if battery.capacity >= house.max_output:
+    #                 # Directly connect if possible
+    #                 self.connect_house(house, battery, connections)
+    #                 unconnected_houses.remove(house_num)
+    #                 break
+    #             else:
+    #                 # Look for potential switches
+    #                 for other_house in connections.get(battery, []):
+    #                     for alt_battery_num, alt_battery in distances[other_house]:
+    #                         if alt_battery != battery and alt_battery.capacity + other_house.max_output >= house.max_output:
+    #                             # Perform the switch
+    #                             self.switch_houses(other_house, house, battery, alt_battery, connections)
+    #                             unconnected_houses.remove(house_num)
+    #                             break
+    #                     if house_num not in unconnected_houses:
+    #                         break
+    #             if house_num not in unconnected_houses:
+    #                 break
+
+    #     for battery in connections.keys():
+    #         print(f"{battery.capacity} capacity left in battery {battery.position}")
+
+    #     # print unconected houses
+    #     print(f"Unconnected houses: {unconnected_houses}")
+    #     for house in unconnected_houses:
+    #         print(f"House {house} at {self.houses[house].position} with max output {self.houses[house].max_output} could not be connected")
+
+
+        
+    #     # # Attempt to connect unconnected houses
+    #     # for house_num in list(unconnected_houses):
+    #     #     house = self.houses[house_num]
+    #     #     for battery_num, battery in distances[house]:
+    #     #         for connected_house in connections.get(battery, []):
+    #     #             # Check if switching is possible
+    #     #             second_closest_battery = next((b for b_num, b in distances[connected_house] if b != battery and b.capacity + connected_house.max_output >= house.max_output), None)
+    #     #             if second_closest_battery and second_closest_battery.capacity + connected_house.max_output >= house.max_output:
+    #     #                 # Switch the connection
+    #     #                 connections[battery].remove(connected_house)
+    #     #                 battery.capacity += connected_house.max_output
+
+    #     #                 if second_closest_battery not in connections:
+    #     #                     connections[second_closest_battery] = []
+    #     #                 connections[second_closest_battery].append(connected_house)
+    #     #                 second_closest_battery.capacity -= connected_house.max_output
+
+    #     #                 # Connect the unconnected house
+    #     #                 connections[battery].append(house)
+    #     #                 battery.capacity -= house.max_output
+    #     #                 unconnected_houses.remove(house_num)
+
+    #     #                 if second_closest_battery.capacity < 0:
+    #     #                     print("WARNING, SECOND CLOSEST BATTERY OVERLOADED")
+    #     #                 break
+    #     #             if house_num not in unconnected_houses:
+    #     #                 break
+
+    #     # # Check if any houses are still left unconnected
+    #     # if len(unconnected_houses) > 0:
+    #     #     print("Houses that couldn't be connected:", unconnected_houses)
+
+    #     # return connections
+        
     def get_connections(self):
         connections = {}
         distances = {}
-        connected_houses = set(self.houses.keys())
+        unconnected_houses = set(self.houses.keys())
 
         # Calculate distance from house to each battery and sort batteries by distance for each house
         for house_num, house in self.houses.items():
@@ -32,45 +157,95 @@ class DFM():
                 key=lambda item: self.calculate_distance(house.position, item[1].position)
             )
 
-        # Group houses per battery based on distance, account for capacity
+        # Initial connection attempt
         for house_num, house in self.houses.items():
             for battery_num, battery in distances[house]:
                 if battery.capacity >= house.max_output:
-                    if battery not in connections:
-                        connections[battery] = []
-                    connections[battery].append(house)
-                    battery.capacity -= house.max_output
-                    connected_houses.remove(house_num)
+                    self.connect_house(house, battery, connections)
+                    unconnected_houses.remove(house_num)
                     break
 
-        # Attempt to connect unconnected houses
-        for house_num in list(connected_houses):
-            house = self.houses[house_num]
-            for battery_num, battery in distances[house]:
-                for connected_house in connections.get(battery, []):
-                    # Check if switching is possible
-                    second_closest_battery = next((b for b_num, b in distances[connected_house] if b != battery and b.capacity + connected_house.max_output >= house.max_output), None)
-                    if second_closest_battery:
-                        # Switch the connection
-                        connections[battery].remove(connected_house)
-                        battery.capacity += connected_house.max_output
+        # Keep trying until all houses are connected or no more changes can be made
+        loop = 0
+        while len(unconnected_houses) > 0 and any(b.capacity < 0 for b in self.batteries.values()):
+            any_change_made = False
+            print("LOOP STARTED")
+            print("Unconnected houses:", unconnected_houses)
+            print("Batteries with negative capacity:", [b for b in self.batteries.values() if b.capacity < 0])
+            
 
-                        if second_closest_battery not in connections:
-                            connections[second_closest_battery] = []
-                        connections[second_closest_battery].append(connected_house)
-                        second_closest_battery.capacity -= connected_house.max_output
+            # Attempt to connect each unconnected house
+            for house_num in list(unconnected_houses):
+                house = self.houses[house_num]
+                max_output = house.max_output
 
-                        # Connect the unconnected house
-                        connections[battery].append(house)
-                        battery.capacity -= house.max_output
-                        connected_houses.remove(house_num)
+                # Try direct connection
+                for battery_num, battery in distances[house]:
+                    if battery.capacity >= max_output:
+                        self.connect_house(house, battery, connections)
+                        unconnected_houses.remove(house_num)
+                        any_change_made = True
+                        print(f"House {house_num} directly connected to Battery {battery_num}")
                         break
-                if house_num not in connected_houses:
-                    break
 
-        # Check if any houses are still left unconnected
-        if len(connected_houses) > 0:
-            print("Houses that couldn't be connected:", connected_houses)
+                if not any_change_made:
+                    # Try switching with other houses
+                    for battery_num, battery in distances[house]:
+                        if battery.capacity < max_output:
+                            continue
+
+                        for other_house_num, other_house in connections[battery].items():
+                            if other_house.max_output <= max_output:
+                                # Check if the other house can be connected to a different battery
+                                for alt_battery_num, alt_battery in distances[other_house]:
+                                    if alt_battery != battery and alt_battery.capacity >= other_house.max_output:
+                                        # Disconnect the other house and connect it to the alternative battery
+                                        self.disconnect_house(other_house, battery, connections)
+                                        self.connect_house(other_house, alt_battery, connections)
+
+                                        # Connect the unconnected house to the current battery
+                                        self.connect_house(house, battery, connections)
+                                        unconnected_houses.remove(house_num)
+                                        any_change_made = True
+                                        print(f"Switched House {other_house_num} from Battery {battery_num} to {alt_battery_num}")
+                                        print(f"Connected Unconnected House {house_num} to Battery {battery_num}")
+                                        break
+
+                                    else:
+                                        print(f"House {other_house_num} cannot be connected to a different battery")
+
+                                if any_change_made:
+                                    break
+
+                        if any_change_made:
+                            break
+
+            if not any_change_made:
+                print("No more changes can be made. Exiting the loop.")
+                break
+
+                    
+                
+
+
+        # Final check
+        for battery in connections.keys():
+            print(f"{battery.capacity} capacity left in battery {battery.position}")
+
+        # Print unconnected houses
+        if unconnected_houses:
+            print(f"Unconnected houses: {unconnected_houses}")
+            for house in unconnected_houses:
+                print(f"House {house} at {self.houses[house].position} with max output {self.houses[house].max_output} could not be connected")
+        else:
+            print("All houses successfully connected")
+
+        total_connected_houses = 0
+        for battery in connections.keys():
+            total_connected_houses += len(connections[battery])
+
+        print(f"Total connected houses: {total_connected_houses}")
+        print(f"Total capacity left: {sum(b.capacity for b in self.batteries.values())}")
 
         return connections
     
@@ -210,14 +385,14 @@ class DFM():
         # go depth first, so find the furthes house and connect to closest cable or linked battery
 
         for battery in connections.keys():
-            unconnected_houses = [house for house in connections[battery] if house not in [self.furthest_house[battery], self.furthest_from_furthest_house[battery]]]
+            ununconnected_houses = [house for house in connections[battery] if house not in [self.furthest_house[battery], self.furthest_from_furthest_house[battery]]]
                
             # find furthest house from battery and make routes until all houses are connected
-            # print(f"STARTING WITH {len(unconnected_houses)} unconnected houses")
-            while len(unconnected_houses) > 0:
+            # print(f"STARTING WITH {len(ununconnected_houses)} unconnected houses")
+            while len(ununconnected_houses) > 0:
                 furthest_house = None
                 longest_distance = 0
-                for house in unconnected_houses:
+                for house in ununconnected_houses:
                     distance = self.calculate_distance(battery.position, house.position)
                     if distance > longest_distance:
                         longest_distance = distance
@@ -248,7 +423,7 @@ class DFM():
 
 
                     # remove house from unconnected houses
-                    unconnected_houses.remove(furthest_house)
+                    ununconnected_houses.remove(furthest_house)
 
                 else:
                     # connect to closest cable
@@ -258,7 +433,7 @@ class DFM():
                     routes[battery][furthest_house] = route
 
                     # remove house from unconnected houses
-                    unconnected_houses.remove(furthest_house)
+                    ununconnected_houses.remove(furthest_house)
                         
         # print(f"PRINTING FROM ROUTES FUNCTION: {routes}")
         return routes
@@ -336,20 +511,13 @@ class DFM():
         if (max_x - min_x) > (max_y - min_y):
             # make sure GridSize is an int
             GridSize = int(max_x - min_x)
-            minimum = min_x
-            maximum = max_x
+
         else:
             GridSize = int(max_y - min_y)
-            minimum = min_y
-            maximum = max_y
+
 
         xCenter = int(min_x + (max_x - min_x)/2)
         yCenter = int(min_y + (max_y - min_y)/2)
-
-        # plot density map
-        #cmap = plt.set_cmap('inferno')
-        #plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
-        #plt.colorbar()
 
         # plot grid lines
         for i in range(-extraGridSpace, GridSize+1 + extraGridSpace):
@@ -388,18 +556,33 @@ class DFM():
         cost = total_length_cables * 9 + number_of_batteries * 5000
         print(f"Total costs: {cost}")
 
+
         adjusted_connections = {}
-        adjusted_routes = {}
-        house_num = 0
+        house_idx = 0
+        for house_num, house in self.houses.items():
+            for battery in connections.keys():
+                for connected_house in connections[battery]:
+                    if house == connected_house:
+                        adjusted_connections[house_idx] = [house.position, battery.position]
+                        house_idx += 1
+                        break
 
-        for battery, houses in connections.items():
-            # print(battery, houses)
-            # print()
-            for house in houses:
-                adjusted_connections[house_num] = [house.position, battery.position]
-                adjusted_routes[house_num] = routes[battery][house]
+        adjusted_cable_routes = {}
+        cable_idx = 0
+        for house_num, house in self.houses.items():
+            for battery in routes.keys():
+                if house in routes[battery].keys():
+                    adjusted_cable_routes[cable_idx] = routes[battery][house]
+                    cable_idx += 1
+                    break
+                        
+        
 
-                house_num += 1
+        print(self.batteries)
+        for num, battery in self.batteries.items():
+            print(battery.capacity)
 
+        print(f"Connections {adjusted_connections}\n\n Cable routes {adjusted_cable_routes}\n\n Total cost {cost}")
        
-        return cost, routes, connections
+        return cost, adjusted_cable_routes, adjusted_connections
+
