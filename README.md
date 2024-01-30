@@ -37,31 +37,31 @@ Use grid node system to find density across nodes.
 In the last weeks we have worked on 4 different algorithms to find an optimal solution for connecting houses with given batteries while respecting the maximum capacities of the batteries.
 After running many iterations we have stored the best runs and their data. These were the best results in 10k iterations:
 
-- Random v2 Algorithm (Rv2):
-    Best score district 1: 98242
-    Best score district 2: 86299
-    Best score district 3: 90871
+- ### Random v2 Algorithm (Rv2):
+    - Best score district 1: 98242
+    - Best score district 2: 86299
+    - Best score district 3: 90871
 
     This algorithm is our baseline. It connects houses to a battery and chooses a semi-random path to it. As you can see the costs are all very high and it is not guaranteed that batteries will not overload. Not the best way to connect the houses it shows.
 
-- Smart Allocated Density Districts Algorithm (SADDA)
-    Best score district 1: 36781
-    Best score district 2: 37132
-    Best score district 3: 37402
+- ### Smart Allocated Density Districts Algorithm (SADDA)
+    - Best score district 1: 36781
+    - Best score district 2: 37132
+    - Best score district 3: 37402
 
     As you can see this is a very consistent algorithm. It works good on all districts and has very respectable costs. With the datapoints we have gathered it seems to get more expensive over the districts. We suspect this is because the algorithm finds more complexity in district 3 than district 2. Both of these seem more complex than district 1.
 
-- Nearest-Battery Heuristic Algorithm (NBHA)
-    Best score district 1: 44161
-    Best score district 2: 40507
-    Best score district 3: 39175
+- ### Nearest-Battery Heuristic Algorithm (NBHA)
+    - Best score district 1: 44161
+    - Best score district 2: 40507
+    - Best score district 3: 39175
 
     This is another well working algorithm. It works on all districts. This algorithm seems to work better in districts where SADDA finds more complexity. Although SADDA still performs slightly better. It yields around half the cost of the baseline while also ensuring batteries are not overloading.
 
-- Depth-First Mycelium Algorithm (DFM)
-    Best score district 1: 35332
-    Best score district 2: 34414
-    Best score district 3: x
+- ### Depth-First Mycelium Algorithm (DFM)
+    - Best score district 1: 35332
+    - Best score district 2: 34414
+    - Best score district 3: x
 
     This algorithm seems to perform the best out of the others on district 1 and 2. It uses a depth-first like approach to find the paths. Though, it fails to find a way to connect the houses while respecting battery capacities. It can possibly be improved by adding more layers in depth.
 
