@@ -69,11 +69,17 @@ class Engine:
 
 
         ## rewriting JSON
-        current_lowest_cost, houses_N, batteries_N, cable_routes_N, connections_N = RD.ReadExperimentData()
-        if total_costs < current_lowest_cost:
+        existing_data = RD.ReadExperimentData()
+
+        if existing_data is not None:
+            current_lowest_cost, houses_N, batteries_N, cable_routes_N, connections_N = existing_data
+            if total_costs < current_lowest_cost:
+                WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes, connections)
+
+        else:
             WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes, connections)
 
-        
+            
 
 
         #print(self.houses) # {0: class, 1: class, ...}

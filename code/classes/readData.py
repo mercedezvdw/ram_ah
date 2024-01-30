@@ -23,7 +23,12 @@ class ReadData():
         
         # returns JSON object as 
         # a dictionary
-        data = json.load(file)
+        try: 
+            data = json.load(file)
+        except:
+            print("Error: File not found")
+            return None
+        
         bat_nr = 0
         house_nr = 0
         # go through each line

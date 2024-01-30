@@ -308,8 +308,8 @@ class SADDA():
                             sum_costs += 9
                     non_overlap_cable_routes[i] = route_list
 
-        print(used_segments)
-        print(non_overlap_cable_routes)
+        # print(used_segments)
+        # print(non_overlap_cable_routes)
         # now that we have all unique cable segments, we need to alter the original overlapping data to get a start to finish coord list for each house to battery
         # for now just using vccable_routes works, but we need non overlapping data, so per house battery connection the unique part of each,
         # if the coords have been shown before, just do the next one up to when it shows 1 coord pair
