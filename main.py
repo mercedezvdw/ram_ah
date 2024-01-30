@@ -1,5 +1,5 @@
 # Mercedez van der Wal, Rembrand Ruppert, Yessin Radouan
-# Holds the class that defines a house in our case with its properties
+# Distributes the input values to create a certain set of algorithm runs
 
 # import all things needed
 import matplotlib.pyplot as plt
@@ -23,6 +23,8 @@ import argparse
 
 
 if __name__ == "__main__":
+    seed = 42
+    np.random.seed(seed)
 
     parser = argparse.ArgumentParser()
 
@@ -56,13 +58,5 @@ if __name__ == "__main__":
     
     for i in range(args.mass_run):
 
-        engine = Engine(args.algo, args.district, args.plot, args.save_csv)
+        engine = Engine(args.algo, args.district, args.plot, args.save_csv, seed)
         engine.run()
-    
-    
-
-
-
-
-
-

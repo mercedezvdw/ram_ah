@@ -9,10 +9,10 @@ from code.classes.cable import CableSegment
 
 
 class Rv2():
-
-    def __init__(self, batteries, houses):
+    def __init__(self, batteries, houses, seed):
         self.batteries = batteries
         self.houses = houses
+        random.seed(seed)
 
 
     def calculate_distance(self, c1, c2):
@@ -22,6 +22,7 @@ class Rv2():
         distance = math.sqrt(((c1[0] - c2[0]) ** 2) + ((c1[1] - c2[1]) ** 2))
         return distance
         
+
     def make_connections(self):
         """
         Connect the houses to the closest battery
@@ -83,9 +84,6 @@ class Rv2():
         return all_moves
 
 
-
-
-        
     def generate_routes(self, start_position, end_position):
         """
         Random walk generates the route per connection

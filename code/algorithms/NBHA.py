@@ -9,9 +9,10 @@ import numpy as np
 from code.classes.cable import CableSegment
 
 class NBH_A():
-    def __init__(self, batteries, houses):
+    def __init__(self, batteries, houses, seed):
         self.batteries = batteries
         self.houses = houses
+        random.seed(seed)
 
 
     def calculate_distance(self, c1, c2):

@@ -4,16 +4,18 @@
 import math
 from matplotlib import pyplot as plt
 import numpy as np
+import random
 from itertools import combinations
 
 class DFM():
 
-    def __init__(self, batteries, houses):
-        
+    def __init__(self, batteries, houses, seed):
         self.batteries = batteries
         self.houses = houses
         self.furthest_house = {}
         self.furthest_from_furthest_house = {}
+        random.seed(seed)
+
 
     def calculate_distance(self, c1, c2):
         """
@@ -22,6 +24,7 @@ class DFM():
         distance = math.sqrt(((c1[0] - c2[0]) ** 2) + ((c1[1] - c2[1]) ** 2))
         return distance
     
+
     def connect_house(self, house, battery, connections):
         """Connect a house to a battery."""
         if battery not in connections:
@@ -29,16 +32,19 @@ class DFM():
         connections[battery].append(house)
         battery.capacity -= house.max_output
 
+
     def disconnect_house(self, house, battery, connections):
         """Disconnect a house from a battery."""
         connections[battery].remove(house)
         battery.capacity += house.max_output
+
 
     def switch_houses(self, house_to_disconnect, house_to_connect, battery, alt_battery, connections):
         """Switch a house from one battery to another."""
         connections[battery].remove(house_to_disconnect)
         battery.capacity += house_to_disconnect.max_output
         self.connect_house(house_to_connect, alt_battery, connections)
+
 
     def find_key_by_value(self, house_object):
         for key, value in self.houses.items():
@@ -47,7 +53,6 @@ class DFM():
         return None
 
 
-        
     def get_connections(self):
         connections = {}
         distances = {}
@@ -252,7 +257,6 @@ class DFM():
 
         # print(best_move)
         return best_move
-    
 
         
     def generate_routes(self, start_position, end_position):
@@ -399,13 +403,6 @@ class DFM():
         return routes
 
 
-    
-
-
-        
-
-            
-    
     def DrawCase(self, connections, routes, extraGridSpace = 5):
         # Define colors for each battery
         colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
@@ -496,8 +493,6 @@ class DFM():
         plt.show()
 
 
-
-
     def run(self):
 
         connections = self.get_connections()
@@ -540,4 +535,3 @@ class DFM():
         #     print(f"Battery {num} has {battery.capacity}")
 
         return cost, adjusted_cable_routes, adjusted_connections
-

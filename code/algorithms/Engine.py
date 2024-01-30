@@ -1,3 +1,6 @@
+# Mercedez van der Wal, Rembrand Ruppert, Yessin Radouan
+# Runs all algorithms and reads/writes data
+
 from code.algorithms.Rv2 import Rv2
 from code.algorithms.SADDA import SADDA
 from code.algorithms.NBHA import NBH_A
@@ -11,11 +14,12 @@ import time
 
 class Engine:
 
-    def __init__(self, algo, district, plot, save_csv_data) -> None:
+    def __init__(self, algo, district, plot, save_csv_data, seed) -> None:
         self.algo = algo
         self.district = district
         self.plot = plot
         self.save_csv_data = save_csv_data
+        self.seed = seed
 
         file = CSVReader(f"{district}")
         self.batteries, self.houses = file.ReadCSV()
@@ -30,7 +34,7 @@ class Engine:
 
 
         if self.algo == "Rv2":
-            algo = Rv2(self.batteries, self.houses)
+            algo = Rv2(self.batteries, self.houses, self.seed)
             connections, cable_routes, total_costs = algo.run()
             # print(connections)
             
@@ -39,15 +43,15 @@ class Engine:
                 case.DrawCase()
 
         elif self.algo == "SADDA":
-            sad = SADDA(self.batteries, self.houses)
-            total_costs, cable_routes, connections = sad.SADDA_Run()
+            algo = SADDA(self.batteries, self.houses, self.seed)
+            total_costs, cable_routes, connections = algo.SADDA_Run()
 
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
                 case.DrawCase()
 
         elif self.algo == "NBHA":
-            algo = NBH_A(self.batteries, self.houses)
+            algo = NBH_A(self.batteries, self.houses, self.seed)
             total_costs, cable_routes, connections, houses_shuffled = algo.run()
             self.houses = houses_shuffled
 
@@ -56,7 +60,7 @@ class Engine:
                 case.DrawCase()
 
         elif self.algo == "DFM":
-            algo = DFM(self.batteries, self.houses)
+            algo = DFM(self.batteries, self.houses, self.seed)
             total_costs, cable_routes, connections = algo.run()
             
 

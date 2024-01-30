@@ -7,12 +7,13 @@ import numpy as np
 import random
 
 class SADDA():
-    def __init__(self, BatteryList, HouseList):
+    def __init__(self, BatteryList, HouseList, seed):
         """
         Initialise battery and house positions to use
         """
         self.BatteryPosList = BatteryList
         self.HousePosList = HouseList
+        random.seed(seed)
         
         #print(self.BatteryPosList[0].position)
     
