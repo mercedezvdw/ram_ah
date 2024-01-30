@@ -283,7 +283,7 @@ class NBH_A():
         min_distance = float('inf')
         
         for coordinate in cable_route:
-            distance = calculate_distance(target_coordinate, coordinate)
+            distance = self.calculate_distance(target_coordinate, coordinate)
             if distance < min_distance:
                 min_distance = distance
                 closest_coordinate = coordinate
@@ -441,4 +441,3 @@ class NBH_A():
         print("Min: ", min(result))
 
         return total_costs, min_cable_routes, min_connections, houses_shuffled
-        
