@@ -24,7 +24,8 @@ class Engine:
 
         if self.algo == "Rv2":
             algo = Rv2(self.batteries, self.houses)
-            cables, cable_routes, total_costs = algo.run()
+            connections, cable_routes, total_costs = algo.run()
+            # print(connections)
             
             if self.plot:
                 case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)

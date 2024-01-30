@@ -556,22 +556,33 @@ class DFM():
         cost = total_length_cables * 9 + number_of_batteries * 5000
         print(f"Total costs: {cost}")
 
+
         adjusted_connections = {}
-        adjusted_routes = {}
-        house_num = 0
+        house_idx = 0
+        for house_num, house in self.houses.items():
+            for battery in connections.keys():
+                for connected_house in connections[battery]:
+                    if house == connected_house:
+                        adjusted_connections[house_idx] = [house.position, battery.position]
+                        house_idx += 1
+                        break
 
-        for battery, houses in connections.items():
-
-            for house in houses:
-                adjusted_connections[house_num] = [house.position, battery.position]
-                adjusted_routes[house_num] = routes[battery][house]
-
-                house_num += 1
+        adjusted_cable_routes = {}
+        cable_idx = 0
+        for house_num, house in self.houses.items():
+            for battery in routes.keys():
+                if house in routes[battery].keys():
+                    adjusted_cable_routes[cable_idx] = routes[battery][house]
+                    cable_idx += 1
+                    break
+                        
+        
 
         print(self.batteries)
         for num, battery in self.batteries.items():
             print(battery.capacity)
 
+        print(f"Connections {adjusted_connections}\n\n Cable routes {adjusted_cable_routes}\n\n Total cost {cost}")
        
-        return cost, routes, connections
+        return cost, adjusted_cable_routes, adjusted_connections
 

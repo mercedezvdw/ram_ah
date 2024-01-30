@@ -174,4 +174,20 @@ class Rv2():
         for num, battery in self.batteries.items():
             print(battery.capacity)
 
-        return cables, cable_routes, total_cost
+    
+        adjusted_connections = {}
+        house_idx = 0
+        for house, battery in connections.items():
+            adjusted_connections[house_idx] = [house.position, battery.position]
+            house_idx += 1
+
+        adjusted_cable_routes = {}
+        cable_idx = 0
+        for house, route in cable_routes.items():
+            adjusted_cable_routes[cable_idx] = route
+            cable_idx += 1
+
+        # print(f"Connections {adjusted_connections}\n\n Cable routes {adjusted_cable_routes}\n\n Total cost {total_cost}")
+
+
+        return adjusted_connections, adjusted_cable_routes, total_cost
