@@ -57,6 +57,6 @@ if __name__ == "__main__":
         args.mass_run = 1
     
     for i in range(args.mass_run):
-
         engine = Engine(args.algo, args.district, args.plot, args.save_csv, seed)
         engine.run()
+        seed += 1
