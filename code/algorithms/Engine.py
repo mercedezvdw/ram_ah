@@ -54,7 +54,8 @@ class Engine:
             
 
             if self.plot:
-                algo.DrawCase(connections, cable_routes)
+                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
+                case.DrawCase()
 
 
         #print(self.houses) # {0: class, 1: class, ...}
