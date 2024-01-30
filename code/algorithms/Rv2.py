@@ -25,7 +25,7 @@ class Rv2():
 
     def make_connections(self):
         """
-        Connect the houses to the closest battery
+        Connect the houses to a random battery
         """
         houses = self.houses
         batteries = self.batteries
