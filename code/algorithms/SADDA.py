@@ -73,13 +73,25 @@ class SADDA():
         # generate centroids randomly
         centroids = []
         numCentroids = len(self.BatteryPosList)
+        spawnedCentroids = 0
+        # first I had centroids spawn on battery locations, but now we take random values of gridnodes of the system (0-50)
+        # also check if the correct amount of centroids are spawned without some having the same initial position
+        # (for loop -> while loop)
+        while spawnedCentroids < numCentroids:
+            coords = [int(random.random()*50), int(random.random()*50)]
+            if coords not in centroids:
+                centroids.append([int(random.random()*50), int(random.random()*50)])
+                spawnedCentroids += 1
+                #print(spawnedCentroids, centroids)
+        '''
         for i in range(numCentroids):
-            centroids.append([self.HousePosList[i].position[0], self.HousePosList[i].position[1]])
+            centroids.append([int(random.random()*50), int(random.random()*50)])
+        '''
 
         # repeat the next step until there is no change,
         # 42 is (ofcourse) the correct number of loops for this to have diminishing to no returns,
         # but 10 roughly disperses the capacity the best
-        for _ in range(10):
+        for _ in range(1,int(random.random()*420)):
             # calculate for every house which is the nearest centroid and then assign this position to that centroid
             centroidAssignmentList = [] # [centroid number, x, y]
             for i in range(len(self.HousePosList)):
@@ -110,14 +122,18 @@ class SADDA():
                         y_coord += centroidAssignmentList[j][2]
                         housesAssigned += 1
                         #print(x_coord, y_coord, housesAssigned)
-                        
-                x_coord = x_coord / housesAssigned
-                y_coord = y_coord / housesAssigned
+                
+                # failsafe if no houses are assigned to a centroid
+                # (should not be the case, but just to prevent errors)
+                if housesAssigned > 0:
+                    x_coord = x_coord / housesAssigned
+                    y_coord = y_coord / housesAssigned
 
                 # update position
                 centroids[i][0] = x_coord
                 centroids[i][1] = y_coord
 
+        #print(centroids)
         return centroids
     
 
