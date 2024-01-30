@@ -40,6 +40,9 @@ if __name__ == "__main__":
     parser.add_argument("--save_csv", action='store_true',
                     help="Save the data from this run to a csv file. Default is False. Omit to not save.")
     
+    parser.add_argument("--mass_run", type=int,
+                    help="Use this to run the algorithm multiple times. Default is 1.")
+    
     args = parser.parse_args()
 
     if args.algo not in ["SADDA", "NBHA", "Rv2", "KNN", "DFM"]:
@@ -48,9 +51,13 @@ if __name__ == "__main__":
     if args.district not in ["test", "0", "1", "2", "3"]:
         raise Exception("Invalid district, options: test, 0, 1, 2, 3")
     
+    if args.mass_run is None:
+        args.mass_run = 1
     
-    engine = Engine(args.algo, args.district, args.plot, args.save_csv)
-    engine.run()
+    for i in range(args.mass_run):
+
+        engine = Engine(args.algo, args.district, args.plot, args.save_csv)
+        engine.run()
     
     
 
