@@ -3,6 +3,7 @@
 # For every house, check first if there is already a cable connected, to minimilize the costs of cables
 
 import math
+from random import sample
 import random
 import numpy as np
 from code.classes.cable import CableSegment
@@ -190,7 +191,13 @@ class NBH_A():
                                 else:
                                     begin = end
         return None, None
-
+    
+    def match_battery_to_house(self, house_position, connections):
+        for connection in connections.values():
+            if connection[0] == house_position:
+                connected_battery = connection[1]
+                return connected_battery
+        return None
 
     def find_connected_battery(self, cables, closest_cable):
         for cable in cables.values():
@@ -289,8 +296,23 @@ class NBH_A():
                 closest_coordinate = coordinate
         
         return closest_coordinate
+        
+    def optimize_cable_route(self, house_position, connected_battery, old_route, connections, cable_routes):
+        best_route = None
+        
+        for key, connection in connections.items():
+            if connection[1] == connected_battery:
+                check_house = connection[0]
+                closest_coordinate = self.find_closest_coordinate(house_position, cable_routes[key])
+                batt = self.find_battery(connected_battery)
+                new_route = self.create_cable_route(house_position, closest_coordinate, batt)
+                if len(new_route) < old_route:
+                    best_route = new_route
+        
+        return best_route
+            
                 
-    def get_result(self):
+    def run(self):
         """
         Execute Nearest Battery Heuristic Algorithm
         """
@@ -299,6 +321,7 @@ class NBH_A():
         connections = {}
         sum_costs = 5000 * (len(self.batteries))
         assign_again = {}
+        optimize = {}
         
         # Reset the battery capacacities
         self.reset_batteries()
@@ -347,13 +370,10 @@ class NBH_A():
             cable_routes[i] = cable_route
             connections[i] = [houses_copy[i].position, match]
             cables[i] = CableSegment(houses_copy[i].position, match, route_costs)
-            sum_costs += route_costs
             
             # Add capacity of house to used capacity of the connected battery
             battery = self.find_battery(match)
             battery.add_used_capacity(houses_copy[i].max_output)
-        
-        j = 150
         
         while len(assign_again) != 0: 
             for key, house in assign_again.copy().items():
@@ -399,45 +419,50 @@ class NBH_A():
                 cable_routes[key] = cable_route
                 connections[key] = [house.position, match]
                 cables[key] = CableSegment(house.position, match, route_costs)
-                sum_costs += route_costs
             
                 # Add capacity of house to used capacity of the connected battery
                 battery = self.find_battery(match)
                 battery.add_used_capacity(house.max_output)
                 
                 del assign_again[key]
-        
-        houses_shuffled = houses_copy
-                
-        return cables, cable_routes, sum_costs, connections, houses_shuffled
     
-    def run(self):
-        """
-        Execute Nearest Battery Heuristic Algorithm
-        """
-        result = []
-        min_costs = float('inf')
-        min_cables = None
-        min_cable_routes = None
-        min_connections = None
-        total_costs = None
-        
-        # Run 1000 iterations
-        for i in range(100):
-            cables, cable_routes, sum_costs, connections, houses_shuffled = self.get_result()
-            result.append(sum_costs)
-            
-            # Plot the best iteration
-            if sum_costs < min_costs:
-                min_costs = sum_costs
-                min_cable_routes = cable_routes
-                total_costs = sum_costs
-                min_connections = connections
-                
-        
-        print("Average: ", (sum(result)/len(result)))
-        print("Median: ", np.median(result))
-        print("Max: ", max(result))
-        print("Min: ", min(result))
+        houses_shuffled = houses_copy
 
-        return total_costs, min_cable_routes, min_connections, houses_shuffled
+        # Add all the route costs to sum costs
+        for route in cable_routes.values():
+            route_costs = (len(route) - 1) * 9
+            sum_costs += route_costs
+
+        return sum_costs, cable_routes, connections, houses_shuffled
+
+    # def run(self):
+    #     """
+    #     Execute Nearest Battery Heuristic Algorithm
+    #     """
+    #     result = []
+    #     min_costs = float('inf')
+    #     min_cables = None
+    #     min_cable_routes = None
+    #     min_connections = None
+    #     total_costs = None
+    #
+    #     # Run 1000 iterations
+    #     for i in range(100):
+    #         cables, cable_routes, sum_costs, connections, houses_shuffled = self.get_result()
+    #         result.append(sum_costs)
+    #
+    #         # Plot the best iteration
+    #         if sum_costs < min_costs:
+    #             min_costs = sum_costs
+    #             min_cable_routes = cable_routes
+    #             total_costs = sum_costs
+    #             min_connections = connections
+    #
+    #
+    #     print("Average: ", (sum(result)/len(result)))
+    #     print("Median: ", np.median(result))
+    #     print("Max: ", max(result))
+    #     print("Min: ", min(result))
+    #
+    #     return total_costs, min_cable_routes, min_connections, houses_shuffled
+        
