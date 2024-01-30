@@ -22,25 +22,6 @@ from code.algorithms.Engine import Engine
 import argparse
 
 
-#     # ---------------------- RANDOM WALK ALGORITHM ----------------------
-# def ConnectCables():
-#     """
-#     Connects cables from houses to batteries
-#     """
-#     cable_price = 10
-#     cables = {}
-#     i = 0
-    
-#     for house, battery in connections.items():
-#             pos_begin = house.position
-#             pos_end = battery.position
-        
-#             cables[i] = CableSegment(pos_begin, pos_end, cable_price)
-#             i += 1
-
-#     return cables
-
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
