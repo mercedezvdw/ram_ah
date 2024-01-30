@@ -2,6 +2,8 @@
 # Writes the data stored in our own experiment datafiles
 
 import json
+import os
+import csv
 
 class WriteData():
     def __init__(self, districtNumber, usedAlgorithm):
@@ -59,6 +61,34 @@ class WriteData():
         Clears all data from a file for a hard reset, when significant changes are made.
         """
         return None
+    
+    def WriteRunCSV(self, total_costs, run_time):
+        """
+        Writes the results of a run in a .csv file.
+        """
+        file_name = f"data/algo_scores/{self.usedAlgorithm}.csv"  # Name of the CSV file
+        file_exists = os.path.isfile(file_name)  # Check if file already exists
+
+        with open(file_name, mode='a', newline='') as file:  # Open the file in append mode
+            writer = csv.writer(file)
+
+            if not file_exists:
+                # Write the header if the file doesn't exist
+                writer.writerow(['Run ID', 'District Number', 'Total Costs', 'Run Time'])
+
+            # Determine the next index
+            if file_exists:
+                # If file exists, find the last index
+                with open(file_name, mode='r') as read_file:
+                    last_line = list(csv.reader(read_file))[-1]
+                    last_index = int(last_line[0])
+                    next_index = last_index + 1
+            else:
+                next_index = 1  # Start from 1 if file doesn't exist
+
+
+            # Write the new data
+            writer.writerow([next_index, self.districtNumber, total_costs, run_time])
     
 
 # JSON FORMAT:

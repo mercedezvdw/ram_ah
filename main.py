@@ -37,6 +37,9 @@ if __name__ == "__main__":
     parser.add_argument("--plot", action='store_true',
                     help="Plot the district. Default is False. Omit to not plot.")
     
+    parser.add_argument("--save_csv", action='store_true',
+                    help="Save the data from this run to a csv file. Default is False. Omit to not save.")
+    
     args = parser.parse_args()
 
     if args.algo not in ["SADDA", "NBHA", "Rv2", "KNN", "DFM"]:
@@ -46,7 +49,7 @@ if __name__ == "__main__":
         raise Exception("Invalid district, options: test, 0, 1, 2, 3")
     
     
-    engine = Engine(args.algo, args.district, args.plot)
+    engine = Engine(args.algo, args.district, args.plot, args.save_csv)
     engine.run()
     
     
