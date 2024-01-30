@@ -132,7 +132,7 @@ class DFM():
                     
                     # Loop over every combination of batteries
                     for battery_1, battery_2 in battery_combinations:
-                        print(f"Checking batteries {battery_1} and {battery_2}")
+                        # print(f"Checking batteries {battery_1} and {battery_2}")
 
                         if changed:
                             break
@@ -308,15 +308,14 @@ class DFM():
     def set_cables(self, connections):
 
         routes = {}
-
-        furthest_house = None
-        longest_distance = 0
-        furthest_from_furthest_house = None
-        second_distance = 0
-                
     
-        # Creaste base cables for furthest house and furthest house from this house
+        # Create base cables for furthest house and furthest house from this house
         for battery in connections.keys():
+            furthest_house = None
+            longest_distance = 0
+            furthest_from_furthest_house = None
+            second_distance = 0
+
             for house in connections[battery]:
                 distance = self.calculate_distance(battery.position, house.position)
                 if distance > longest_distance:
@@ -537,10 +536,8 @@ class DFM():
                     cable_idx += 1
                     break
                         
-        
-
-        for num, battery in self.batteries.items():
-            print(f"Battery {num} has {battery.capacity}")
+        # for num, battery in self.batteries.items():
+        #     print(f"Battery {num} has {battery.capacity}")
 
         return cost, adjusted_cable_routes, adjusted_connections
 
