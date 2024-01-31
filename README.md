@@ -10,7 +10,7 @@ To run this program, the user needs to have a working version of python installe
 After this, the user needs to install the required packages, listed in 'requirements.txt'.
 The user now needs to open the 'ram_ah' directory in the preferred code editor.
 
-Now, the user simply needs to type `python main.py` into the command line and press enter, and the code will run. For more information regarding the command line use `python main.py --help`. To run an algorithm use `--algo "name_algorithm" --district "district_number"`. Optional: use `--plot` to make a plot of the results.
+For more information regarding the command line use `python main.py --help`. To run an algorithm use `--algo "name_algorithm" --district "district_number"`. Optional: use `--plot` to make a plot of the results.
 
 Here's an example how it works:
 ```
