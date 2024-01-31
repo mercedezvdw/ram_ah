@@ -16,7 +16,7 @@ from code.algorithms.NBHA import NBH_A
 from code.classes.readData import ReadData
 from code.classes.writeData import WriteData
 
-from code.algorithms.Rv2 import *
+from code.algorithms.Rv2 import Rv2
 from code.algorithms.Engine import Engine
 import argparse
 

@@ -39,14 +39,6 @@ class PlotCase():
 
         NOTE: cables argument is not used!
         """
-        # calculate a density mapping of all houses in the district
-        #DCA = DensityComputation(self.batteries, self.houses)
-        #PosList = DCA.GetPosList()
-        #DensityMap = DCA.GetDensityMapping(PosList, self.extraGridSpace)
-        #DensityMap = DCA.AlterGrid(DensityMap)
-        # make DensityMap a numpy array to use more efficiently
-        #DensityMap = np.array(DensityMap)
-
         # Create a merged list of all positions and get the minimum and maximum x and y values to make a map
         # Add all x and y to respective lists
         all_x = []
@@ -80,11 +72,6 @@ class PlotCase():
 
         xCenter = int(min_x + (max_x - min_x)/2)
         yCenter = int(min_y + (max_y - min_y)/2)
-
-        # plot density map
-        #cmap = plt.set_cmap('inferno')
-        #plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
-        #plt.colorbar()
 
         # Plot grid lines
         for i in range(-self.extraGridSpace, GridSize+1 +self.extraGridSpace):
