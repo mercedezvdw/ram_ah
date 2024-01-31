@@ -14,7 +14,7 @@ For more information regarding the command line use `python main.py --help`. To 
 
 Here's an example how it works:
 ```
-python3 main.py --algo SADDA --district 1 --plot
+python main.py --algo SADDA --district 1 --plot
 ```
 
 We are using the given data of districts 1-3. District 0 and test have been used for our own experimenting purposes.
