@@ -74,7 +74,18 @@ After running many iterations we have stored the best runs and their data. These
     This algorithm seems to perform the best out of the others on district 1 and 2. It uses a depth-first like approach to find the paths. Though, it fails to find a way to connect the houses while respecting battery capacities in district 3. It can possibly be improved by adding more layers in depth.
 
 
-Conclusion:
+- ## Results of All Algorithms per District - Visualised
+- ### District 1:
+    <img src="documentation/Comparison_district_1.png" alt="D1" width="1080"/>
+
+- ### District 2:
+    <img src="documentation/Comparison_district_2.png" alt="D2" width="1080"/>
+
+- ### District 3:
+    <img src="documentation/Comparison_district_3.png" alt="D3" width="1080"/>
+
+
+## Conclusion:
     We have created algorithms that have at least 2x the efficiency than our base algorithm in every district. We are happy with the progress we made.
 
 
