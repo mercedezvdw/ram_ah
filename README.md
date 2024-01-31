@@ -1,9 +1,11 @@
 # Team RAM - Project SmartGrid
 ## Mercedez van der Wal // Rembrand Ruppert // Yessin Radouane
 
+
 ## Description
 *Green energy is the energy of the future, and producing it yourself is the fashion of today. Many houses nowadays have solar panels, wind turbines or other installations to produce energy themselves. Fortunately, these installations often produce more than is needed for own consumption. The surplus could be sold back to the supplier, but the infrastructure (the grid) is often not designed for this. Batteries must be installed to manage peaks in consumption and production.
 SmartGrid is a problem that describes a district with these houses and batteries placed on a grid. A solution to this problem is a scenario where all houses are connected to the batteries.*
+
 
 ## Requirements
 To run this program, the user needs to have a working version of python installed and download and unzip the 'ram_ah' folder.
@@ -23,21 +25,20 @@ We are using the given data of districts 1-3. District 0 and test have been used
 ## Algorithms
 To find an efficient solution to our problem, we have implemented several algorithms.
 
-### Depth First Mycelium Algorithm
-DFA finds furthest house from battery and the house furthest from that house, connects them with a cable, then connects the rest of the houses to the closest cable or battery.
+- ### Depth First Mycelium Algorithm
+    - DFA finds furthest house from battery and the house furthest from that house, connects them with a cable, then connects the rest of the houses to the closest cable or battery.
 
-### Random v2 Algorithm (baseline 2.0)
-RWA combines a greedy and random algorithm. There are 3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords).
+- ### Random v2 Algorithm (baseline 2.0)
+    - RWA combines a greedy and random algorithm. There are 3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords).
 
-### Nearest-Battery Heuristic Algorithm -- 
-NBHA finds the shortest path to closest battery. For every house, check first if there is already a cable connected, to minimilize the costs of cables.
+- ### Nearest-Battery Heuristic Algorithm -- 
+    - NBHA finds the shortest path to closest battery. For every house, check first if there is already a cable connected, to minimilize the costs of cables.
 
-### Smart Allocated Density Districts Algorithm 
-SADDA uses (self built) K-means clustering algorithm to find 'sub-districts' / connects houses to the best possible battery.
+- ### Smart Allocated Density Districts Algorithm 
+    - SADDA uses a self built K-means clustering algorithm that creates the same number of batteries randomly placed 'centriods', and in a loop finds the nearest houses, gets a new mean position for each centroid, and repeats this process a random amount of times to eventually find 'sub-districts', each connected to a single battery. It creates an array that indicates which houses are assigned to which battery. A cable path is then placed from each house to its corresponding battery, and after all cables have been placed, the algorithm goes over all paths and eliminates overlapping cable segments for cables that connect to the same battery.
 
 
 ## Best results after 10k iterations for each algorithm on each district
-
 In the last weeks we have worked on 4 different algorithms to find an optimal solution for connecting houses with given batteries while respecting the maximum capacities of the batteries.
 After running many iterations we have stored the best runs and their data. These were the best results in 10k iterations:
 
@@ -86,13 +87,4 @@ After running many iterations we have stored the best runs and their data. These
 
 
 ## Conclusion:
-We have created algorithms that have at least 2x the efficiency than our base algorithm in every district. We are happy with the progress we made.
-
-
-
-
-
-
-
-
-
+    We have created algorithms that have at least 2x the efficiency than our base algorithm in every district. We are happy with the progress we made.
