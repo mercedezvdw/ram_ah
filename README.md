@@ -21,6 +21,9 @@ python main.py --algo SADDA --district 1 --plot
 
 We are using the given data of districts 1-3. District 0 and test have been used for our own experimenting purposes.
 
+We have done 10k iterations for each algorithm in districts 1, 2 and 3. Except for DFM as this fails to find connections in district 3. The scores for these iterations are stored in csv files (/data/algo_scores.csv). The best iteration from an algo in district X is stored in the json files (/data/district_X).
+For analyzing this data we have used the scripts are also saved in code/analysis.
+
 
 ## Algorithms
 To find an efficient solution to our problem, we have implemented several algorithms.
@@ -85,6 +88,8 @@ After running many iterations we have stored the best runs and their data. These
 - ### District 3:
     <img src="documentation/Comparison_district_3.png" alt="D3" width="1080"/>
 
+
+## Notes on how to run:
 
 ## Conclusion:
 We have created algorithms that have at least 2x the efficiency than our base algorithm in every district. We are happy with the progress we made.

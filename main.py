@@ -4,7 +4,6 @@
 # import all things needed
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 from code.classes.house import House
 from code.classes.battery import Battery
 from code.classes.cable import CableSegment

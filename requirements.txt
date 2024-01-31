@@ -1,8 +1,4 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import random
-import json
-import os
-import csv
-import math
-import itertools
+matplotlib==3.8.2
+numpy==1.26.2
+pandas==2.1.4
+
