@@ -9,18 +9,16 @@ SmartGrid is a problem that describes a district with these houses and batteries
 To run this program, the user needs to have a working version of python installed and download and unzip the 'ram_ah' folder.
 After this, the user needs to install the required packages, listed in 'requirements.txt'.
 The user now needs to open the 'ram_ah' directory in the preferred code editor.
-Now, the user simply needs to type 'python main.py' into the command line and press enter, and the code will run.*
 
-We are using the given data of districts 1-3. District 0 and test have been used for our own experimenting purposes.
-
-## Running the algorithms
-Argparse has been implemented for running `main.py`. For additional information, you can use `--help`. 
-To run an algorithm use `--algo "name_algorithm" --district "district_number"`. Optional: use `--plot` to make a plot of the results.
+Now, the user simply needs to type `python main.py` into the command line and press enter, and the code will run. For more information regarding the command line use `python main.py --help`. To run an algorithm use `--algo "name_algorithm" --district "district_number"`. Optional: use `--plot` to make a plot of the results.
 
 Here's an example how it works:
 ```
 python3 main.py --algo SADDA --district 1 --plot
 ```
+
+We are using the given data of districts 1-3. District 0 and test have been used for our own experimenting purposes.
+
 
 ## Algorithms
 To find an efficient solution to our problem, we have implemented several algorithms.
