@@ -30,7 +30,7 @@ class Rv2():
         batteries = self.batteries
         connections = {}
         
-        #Connect every house to a random battery
+        # Connect every house to a random battery
         for house_num, house in houses.items():        
             all_batteries = list(batteries.values())
             choice = random.choice(all_batteries)
@@ -46,7 +46,6 @@ class Rv2():
             illegal_move is the move that is not allowed to be made, this is the move that will undo the previous move."""
 
         all_moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        
 
         if illegal_move != None:
             all_moves.remove(illegal_move)
