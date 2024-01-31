@@ -26,7 +26,7 @@ To find an efficient solution to our problem, we have implemented several algori
 ### Depth First Mycelium Algorithm
 DFA finds furthest house from battery and the house furthest from that house, connects them with a cable, then connects the rest of the houses to the closest cable or battery.
 
-### Random Walk Algorithm (baseline 2.0)
+### Random v2 Algorithm (baseline 2.0)
 RWA combines a greedy and random algorithm. There are 3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords).
 
 ### Nearest-Battery Heuristic Algorithm -- 
