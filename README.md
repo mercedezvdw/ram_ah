@@ -11,6 +11,8 @@ After this, the user needs to install the required packages, listed in 'requirem
 The user now needs to open the 'ram_ah' directory in the preferred code editor.
 Now, the user simply needs to type 'python main.py' into the command line and press enter, and the code will run.*
 
+We are using the given data of districts 1-3. District 0 and test have been used for our own experimenting purposes.
+
 ## Running the algorithms
 Argparse has been implemented for running `main.py`. For additional information, you can use `--help`. 
 To run an algorithm use `--algo "name_algorithm" --district "district_number"`. Optional: use `--plot` to make a plot of the results.
@@ -20,27 +22,23 @@ Here's an example how it works:
 python3 main.py --algo SADDA --district 1 --plot
 ```
 
-## 15-01-2024 Notes of algorithm ideas
+## Algorithms
+To find an efficient solution to our problem, we have implemented several algorithms.
 
-KNN Algorithm to divide neighborhoods and find closest battery
-Density of houses (SPH-like); main cable with small(er) branches to closeby houses
+### Depth First Mycelium Algorithm
+DFA finds furthest house from battery and the house furthest from that house, connects them with a cable, then connects the rest of the houses to the closest cable or battery.
 
-Algorithms:
-- Average Location Detection Algorithm (ALDA) ( find average location of all houses (within sub-districts) to batteries / calculate average amount of cables / maybe use it as regression to find approximate (main) cable location)
-- Density Computing Algorithm (DCA) (uses either KNN or altered SPH density calculations / compute house density and create subdistricts)
-- Random Walk Algorithm (RWA) (3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords))
-- Nearest Neighbour Algorithm (NNA) (from Nth house to nearest battery or cable segment / use different combinations of houses to find optimal minimum cable length / is like KNN, but oversimplified and self made)
-- Smart Allocated Density Districts Algorithm (SADDA) (use (self built) KNN Algorithm to find 'sub-districts' / place a main cable through the highest density of a sub-district)
+### Random Walk Algorithm (baseline 2.0)
+RWA combines a greedy and random algorithm. There are 3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords).
 
-evaluation: amount of meters used for cables.
+### Nearest-Battery Heuristic Algorithm -- 
+NBHA finds the shortest path to closest battery. For every house, check first if there is already a cable connected, to minimilize the costs of cables.
 
-extra constraint: capacity
-
-Use grid node system to find density across nodes.
+### Smart Allocated Density Districts Algorithm 
+SADDA uses (self built) K-means clustering algorithm to find 'sub-districts' / connects houses to the best possible battery.
 
 
-
-## Best results after 10k iterations for each algo on each district
+## Best results after 10k iterations for each algorithm on each district
 
 In the last weeks we have worked on 4 different algorithms to find an optimal solution for connecting houses with given batteries while respecting the maximum capacities of the batteries.
 After running many iterations we have stored the best runs and their data. These were the best results in 10k iterations:
@@ -80,6 +78,7 @@ After running many iterations we have stored the best runs and their data. These
 
 Conclusion:
     We have created algorithms that have at least 2x the efficiency than our base algorithm in every district. We are happy with the progress we made.
+
 
 
 
