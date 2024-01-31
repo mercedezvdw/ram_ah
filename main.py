@@ -8,7 +8,6 @@ import random
 from code.classes.house import House
 from code.classes.battery import Battery
 from code.classes.cable import CableSegment
-from code.algorithms.DCA import DensityComputation
 from code.classes.plot import PlotCase
 from code.classes.readCSV import CSVReader
 from code.algorithms.SADDA import SADDA

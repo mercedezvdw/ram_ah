@@ -4,7 +4,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-from code.algorithms.DCA import DensityComputation
 
 class PlotCase():
     def __init__(self, batteries, houses, extraGridSpace, cable_routes, connections):
