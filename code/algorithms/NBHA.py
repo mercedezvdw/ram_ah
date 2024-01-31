@@ -40,7 +40,8 @@ class NBH_A():
                 if coordinate == target_position:
                     destination = route[-1]
                     battery = self.find_battery(destination)
-                
+                    
+                     # Make sure that the battery has sufficient capacity
                     if battery is not None:
                         check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house_output)
                         if check_capacity > 0:
@@ -48,35 +49,49 @@ class NBH_A():
 
                 
     def find_house(self, target_position):
+        """
+        Return house object related to given coordinate
+        """
         for house in self.houses.values():
             if house.position == target_position:
                     return house
-        return None
+
 
     def find_connection(self, cables, battery):
         """
         Find a connection with a given battery
         """
-        matching_house = None
         for cable in cables.values():
             if cable.pos_end == battery.position:
                 matching_house = cable.pos_begin
                 return matching_house
 
+
     def find_cable_route(self, house_position, battery_position, cable_routes):
+        """
+        Find the coble route of a given house
+        """
         for cable, route in cable_routes.items():
             if house_position in route:
                 matching_cable = cable
                 return matching_cable
 
+
     def undo_connection(self, house, battery, cable_routes, assign_again, connections):
+        """
+        Remove cable and undo connection of a given house and battery, make sure it will be reassigned
+        """
+        # Find index of the connection and cable route to remove them from the dictionaries
         matching_cable = self.find_cable_route(house.position, battery.position, cable_routes)
         del cable_routes[matching_cable]
         del connections[matching_cable]
+        
+        # Make sure to remove the output from the used capacity of battery and that the house will be reassigned again
         battery.remove_used_capacity(house.max_output)
         assign_again[matching_cable] = house
         
         return matching_cable
+        
         
     def best_alternative(self):
         """
@@ -98,8 +113,7 @@ class NBH_A():
         nearest_battery = None
         min_distance = float('inf')
 
-        
-        while True:
+        while nearest_battery is None:
             max_capacity = 0
             battery_full = None
             
@@ -135,6 +149,9 @@ class NBH_A():
 
 
     def find_closest_cable(self, cable_routes, house_position, house_output, cables):
+        """
+        Find closest cable for a house to connect to
+        """
         min_distance = float('inf')
         closest_cable = None
         connected_battery = None
@@ -192,27 +209,12 @@ class NBH_A():
                                 else:
                                     begin = end
         return None, None
-    
-    def match_battery_to_house(self, house_position, connections):
-        for connection in connections.values():
-            if connection[0] == house_position:
-                connected_battery = connection[1]
-                return connected_battery
-        return None
-
-    def find_connected_battery(self, cables, closest_cable):
-        for cable in cables.values():
-            if cable.pos_begin == closest_cable:
-                connected_battery = cable.pos_end
-                return connected_battery
-        return None
 
 
     def find_battery(self, target_position):
         for battery in self.batteries.values():
             if battery.position == target_position:
                     return battery
-        return None
 
 
     def compare_results(self, house_position, pos1, pos2):
@@ -227,7 +229,11 @@ class NBH_A():
         else: 
             return pos2
 
+
     def check_if_house(self, cable_route):
+        """
+        Find house object in cable route
+        """
         for route in cable_route[1:]:
             for house in self.houses.values():
                 if house.position == route:
@@ -277,41 +283,8 @@ class NBH_A():
         
         if house is not None:
             check_capacity = self.check_battery_capacity(battery.capacity, battery.used_capacity, house.max_output)
-            if check_capacity < 0:
-                AssertionError
     
-        return cable_route
-
-    def reset_batteries(self):
-        for i in range(len(self.batteries)):
-            self.batteries[i].reset_capacity()
-            
-    def find_closest_coordinate(self, target_coordinate, cable_route):
-        closest_coordinate = None
-        min_distance = float('inf')
-        
-        for coordinate in cable_route:
-            distance = self.calculate_distance(target_coordinate, coordinate)
-            if distance < min_distance:
-                min_distance = distance
-                closest_coordinate = coordinate
-        
-        return closest_coordinate
-        
-    def optimize_cable_route(self, house_position, connected_battery, old_route, connections, cable_routes):
-        best_route = None
-        
-        for key, connection in connections.items():
-            if connection[1] == connected_battery:
-                check_house = connection[0]
-                closest_coordinate = self.find_closest_coordinate(house_position, cable_routes[key])
-                batt = self.find_battery(connected_battery)
-                new_route = self.create_cable_route(house_position, closest_coordinate, batt)
-                if len(new_route) < old_route:
-                    best_route = new_route
-        
-        return best_route
-            
+        return cable_route     
                 
     def run(self):
         """
@@ -323,9 +296,6 @@ class NBH_A():
         sum_costs = 5000 * (len(self.batteries))
         assign_again = {}
         optimize = {}
-        
-        # Reset the battery capacacities
-        self.reset_batteries()
         
         houses_copy = self.houses.copy()
         random.shuffle(houses_copy)
@@ -435,35 +405,3 @@ class NBH_A():
             sum_costs += route_costs
 
         return sum_costs, cable_routes, connections, houses_shuffled
-
-    # def run(self):
-    #     """
-    #     Execute Nearest Battery Heuristic Algorithm
-    #     """
-    #     result = []
-    #     min_costs = float('inf')
-    #     min_cables = None
-    #     min_cable_routes = None
-    #     min_connections = None
-    #     total_costs = None
-    #
-    #     # Run 1000 iterations
-    #     for i in range(100):
-    #         cables, cable_routes, sum_costs, connections, houses_shuffled = self.get_result()
-    #         result.append(sum_costs)
-    #
-    #         # Plot the best iteration
-    #         if sum_costs < min_costs:
-    #             min_costs = sum_costs
-    #             min_cable_routes = cable_routes
-    #             total_costs = sum_costs
-    #             min_connections = connections
-    #
-    #
-    #     print("Average: ", (sum(result)/len(result)))
-    #     print("Median: ", np.median(result))
-    #     print("Max: ", max(result))
-    #     print("Min: ", min(result))
-    #
-    #     return total_costs, min_cable_routes, min_connections, houses_shuffled
-        

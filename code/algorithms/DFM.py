@@ -19,9 +19,9 @@ class DFM():
 
     def calculate_distance(self, c1, c2):
         """
-        Calculate the distance between two coordinates
+        Calculate the Manhattan distance between two coordinates
         """
-        distance = math.sqrt(((c1[0] - c2[0]) ** 2) + ((c1[1] - c2[1]) ** 2))
+        distance = abs(c1[0] - c2[0]) + abs(c1[1] - c2[1])
         return distance
     
 
@@ -73,19 +73,14 @@ class DFM():
                     unconnected_houses.remove(house_num)
                     break
 
-        # while len(unconnected_houses) > 0 or any(b.capacity < 0 for b in self.batteries.values()):
         while len(unconnected_houses) > 0:            
-            # check for simple change
+            # Check for simple change
             for unconnected_house in list(unconnected_houses):
 
                 for house_num, house in self.houses.items():
                     if house_num == unconnected_house:
-                        
                         unconnected_house = house
                         unconnected_house_num = house_num
-
-                # print("Trying to connect house", unconnected_house)
-                
 
                 # Find battery with most capacity left:
                 max_capacity = 0
@@ -124,7 +119,6 @@ class DFM():
                         unconnected_houses.remove(unconnected_house_num)
                         break
 
-
                 # Check for more complex change over all batteries
                 if len(unconnected_houses) > 0:
                     all_bateries = [battery for battery in connections.keys()]
@@ -153,7 +147,6 @@ class DFM():
 
                                 if changed:
                                     break
-
 
                                 # Simulate capacities in case of switch houses
                                 new_b1_capacity = battery_1.capacity + house_b1.max_output - house_b2.max_output
@@ -202,8 +195,7 @@ class DFM():
                                         changed = True
 
                                         break
-
-
+                                        
         # Print unconnected houses
         if unconnected_houses:
             print(f"Unconnected houses: {unconnected_houses}")
@@ -211,7 +203,6 @@ class DFM():
                 print(f"House {house} at {self.houses[house].position} with max output {self.houses[house].max_output} could not be connected")
         else:
             print("All houses successfully connected")
-
 
         return connections
     
@@ -221,22 +212,21 @@ class DFM():
         illegal_move is the move that is not allowed to be made, this is the move that will undo the previous move."""
 
         all_moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        
 
         if illegal_move != None:
             all_moves.remove(illegal_move)
 
-        # possible moves
+        # Possible moves
         move_1 = all_moves[0]
         move_2 = all_moves[1]
         move_3 = all_moves[2]
 
-        # calculate distance to end position after simulating the move
+        # Calculate distance to end position after simulating the move
         new_position_1 = [current_position[0] + move_1[0], current_position[1] + move_1[1]]
         new_position_2 = [current_position[0] + move_2[0], current_position[1] + move_2[1]]
         new_position_3 = [current_position[0] + move_3[0], current_position[1] + move_3[1]]
 
-        # caclulate new distance from new position
+        # Caclulate new distance from new position
         distance_1 = self.calculate_distance(new_position_1, end_position)
         distance_2 = self.calculate_distance(new_position_2, end_position)
         distance_3 = self.calculate_distance(new_position_3, end_position)
@@ -245,7 +235,7 @@ class DFM():
 
         best_move = None
 
-        # remove the move that adds the most distance to the end position
+        # Remove the move that adds the most distance to the end position
         if distance_1 == min(distances):
             best_move = move_1
             
@@ -255,7 +245,6 @@ class DFM():
         elif distance_3 == min(distances):
             best_move = move_3
 
-        # print(best_move)
         return best_move
 
         
@@ -265,20 +254,15 @@ class DFM():
         current pos: tuple
         end pos: list
         """
-        # print(f"Generating route from {start_position} to {end_position}")
-        
-        
         current_position = start_position
         route = [current_position]
         last_direction = None
         inefficient_moves = {(0, 1): (0, -1), (0, -1): (0, 1), (1, 0): (-1, 0), (-1, 0): (1, 0)}
         
         while current_position != end_position:
-
             if last_direction == None:
                 best_move = self.check_best_move(current_position, end_position)
                 last_direction = best_move
-            
                 
             elif last_direction == (0, 1):
                 best_move = self.check_best_move(current_position, end_position, (0, -1))
@@ -298,19 +282,16 @@ class DFM():
             
             # Calculate new position after following direction
             new_position = [current_position[0] + best_move[0], current_position[1] + best_move[1]]
-            # print(new_position)
 
             # Make sure it's within the grid size
             if 0 <= new_position[0] <= 50 and 0 <= new_position[1] <= 50:
                 current_position = new_position
                 route.append(current_position)
 
-        # print(route)
         return route
         
 
     def set_cables(self, connections):
-
         routes = {}
     
         # Create base cables for furthest house and furthest house from this house
@@ -341,18 +322,13 @@ class DFM():
 
             self.furthest_house[battery] = furthest_house
             self.furthest_from_furthest_house[battery] = furthest_from_furthest_house
-            
-    
-        # print(routes)
 
-        # now to connect the rest of the houses per battery
-        # go depth first, so find the furthes house and connect to closest cable or linked battery
-
+        # Now to connect the rest of the houses per battery
+        # Go depth first, so find the furthes house and connect to closest cable or linked battery
         for battery in connections.keys():
             ununconnected_houses = [house for house in connections[battery] if house not in [self.furthest_house[battery], self.furthest_from_furthest_house[battery]]]
                
-            # find furthest house from battery and make routes until all houses are connected
-            # print(f"STARTING WITH {len(ununconnected_houses)} unconnected houses")
+            # Find furthest house from battery and make routes until all houses are connected
             while len(ununconnected_houses) > 0:
                 furthest_house = None
                 longest_distance = 0
@@ -362,48 +338,46 @@ class DFM():
                         longest_distance = distance
                         furthest_house = house
     
-                # find closest cable or linked battery
+                # Find closest cable or linked battery
                 smallest_distance_cable = 1e9
                 distance_battery = None
                 closest_cable = None
                 for route in routes[battery].values():
 
-                    #find closest cable
+                    # Find closest cable
                     for cable in route:
                         distance = self.calculate_distance(cable, furthest_house.position)
                         if distance < smallest_distance_cable:
                             smallest_distance_cable = distance
                             closest_cable = cable
 
-                # find closest battery
+                # fFind closest battery
                 distance_battery = self.calculate_distance(battery.position, furthest_house.position)
 
                 if distance_battery < smallest_distance_cable:
-                    # connect to battery
+                    # Connect to battery
                     route = self.generate_routes(battery.position, furthest_house.position)
 
-                    # add route to routes
+                    # Add route to routes
                     routes[battery][furthest_house] = route
-
 
                     # remove house from unconnected houses
                     ununconnected_houses.remove(furthest_house)
 
                 else:
-                    # connect to closest cable
+                    # Connect to closest cable
                     route = self.generate_routes(closest_cable, furthest_house.position)
 
-                    # add route to routes
+                    # Add route to routes
                     routes[battery][furthest_house] = route
 
-                    # remove house from unconnected houses
+                    # Remove house from unconnected houses
                     ununconnected_houses.remove(furthest_house)
                         
-        # print(f"PRINTING FROM ROUTES FUNCTION: {routes}")
         return routes
 
 
-    def DrawCase(self, connections, routes, extraGridSpace = 5):
+    def DrawCase(self, connections, routes, extraGridSpace = 2):
         # Define colors for each battery
         colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
 
@@ -435,7 +409,7 @@ class DFM():
 
             idx += 1
 
-        # total costs:
+        # Total costs:
         total_length_cables = 0
         for battery, routes in routes.items():
             for route in routes.values():
@@ -464,9 +438,9 @@ class DFM():
         max_x = max(all_x)
         max_y = max(all_y)
 
-        # define a square based on the biggest axix
+        # Define a square based on the biggest axix
         if (max_x - min_x) > (max_y - min_y):
-            # make sure GridSize is an int
+            # Make sure GridSize is an int
             GridSize = int(max_x - min_x)
 
         else:
@@ -476,7 +450,7 @@ class DFM():
         xCenter = int(min_x + (max_x - min_x)/2)
         yCenter = int(min_y + (max_y - min_y)/2)
 
-        # plot grid lines
+        # Plot grid lines
         for i in range(-extraGridSpace, GridSize+1 + extraGridSpace):
             # I used int()+1 so it is rounded up, int always rounds down
             plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.1, zorder=-1)
@@ -498,8 +472,7 @@ class DFM():
         connections = self.get_connections()
         routes = self.set_cables(connections)
 
-
-        # total costs:
+        # Total costs:
         total_length_cables = 0
         for battery, battery_routes in routes.items():
             for route in battery_routes.values():
@@ -530,8 +503,5 @@ class DFM():
                     adjusted_cable_routes[cable_idx] = routes[battery][house]
                     cable_idx += 1
                     break
-                        
-        # for num, battery in self.batteries.items():
-        #     print(f"Battery {num} has {battery.capacity}")
 
         return cost, adjusted_cable_routes, adjusted_connections

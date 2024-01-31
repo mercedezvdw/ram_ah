@@ -36,10 +36,9 @@ class Engine:
         if self.algo == "Rv2":
             algo = Rv2(self.batteries, self.houses, self.seed)
             connections, cable_routes, total_costs = algo.run()
-            # print(connections)
             
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
+                case = PlotCase(self.batteries, self.houses, 2, cable_routes, connections)
                 case.DrawCase()
 
         elif self.algo == "SADDA":
@@ -47,7 +46,7 @@ class Engine:
             total_costs, cable_routes, connections = algo.SADDA_Run()
 
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
+                case = PlotCase(self.batteries, self.houses, 2, cable_routes, connections)
                 case.DrawCase()
 
         elif self.algo == "NBHA":
@@ -56,7 +55,7 @@ class Engine:
             self.houses = houses_shuffled
 
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
+                case = PlotCase(self.batteries, self.houses, 2, cable_routes, connections)
                 case.DrawCase()
 
         elif self.algo == "DFM":
@@ -65,7 +64,7 @@ class Engine:
             
 
             if self.plot:
-                case = PlotCase(self.batteries, self.houses, 5, cable_routes, connections)
+                case = PlotCase(self.batteries, self.houses, 2, cable_routes, connections)
                 case.DrawCase()
 
         t2 = time.time()

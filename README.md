@@ -11,12 +11,14 @@ After this, the user needs to install the required packages, listed in 'requirem
 The user now needs to open the 'ram_ah' directory in the preferred code editor.
 Now, the user simply needs to type 'python main.py' into the command line and press enter, and the code will run.*
 
-## Running the Algorithms with argparse
+## Running the algorithms
 Argparse has been implemented for running `main.py`. For additional information, you can use `--help`. 
 To run an algorithm use `--algo "name_algorithm" --district "district_number"`. Optional: use `--plot` to make a plot of the results.
 
 Here's an example how it works:
-```python3 main.py --algo SADDA --district 1 --plot`
+```
+python3 main.py --algo SADDA --district 1 --plot
+```
 
 ## 15-01-2024 Notes of algorithm ideas
 
