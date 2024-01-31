@@ -47,6 +47,7 @@ class DFM():
 
 
     def find_key_by_value(self, house_object):
+        """Find the key of a house object in the houses dictionary."""
         for key, value in self.houses.items():
             if value == house_object:
                 return key
@@ -54,6 +55,8 @@ class DFM():
 
 
     def get_connections(self):
+        """Tries to find houses for each battery. Fails in district 3."""
+
         connections = {}
         distances = {}
         unconnected_houses = set(self.houses.keys())
@@ -73,10 +76,12 @@ class DFM():
                     unconnected_houses.remove(house_num)
                     break
 
+        # Keep trying to connect houses until all houses are connected
         while len(unconnected_houses) > 0:            
             # Check for simple change
             for unconnected_house in list(unconnected_houses):
-
+                
+                # get house number and house object
                 for house_num, house in self.houses.items():
                     if house_num == unconnected_house:
                         unconnected_house = house
@@ -257,8 +262,8 @@ class DFM():
         current_position = start_position
         route = [current_position]
         last_direction = None
-        inefficient_moves = {(0, 1): (0, -1), (0, -1): (0, 1), (1, 0): (-1, 0), (-1, 0): (1, 0)}
         
+        # Keep walking until end position is reached
         while current_position != end_position:
             if last_direction == None:
                 best_move = self.check_best_move(current_position, end_position)
@@ -301,25 +306,30 @@ class DFM():
             furthest_from_furthest_house = None
             second_distance = 0
 
+            # find furthest house A
             for house in connections[battery]:
                 distance = self.calculate_distance(battery.position, house.position)
                 if distance > longest_distance:
                     longest_distance = distance
                     furthest_house = house
 
+            # find furthest house from A
             for house in connections[battery]:
                 distance = self.calculate_distance(furthest_house.position, house.position)
                 if distance > second_distance and house != furthest_house:
                     second_distance = distance
                     furthest_from_furthest_house = house
 
+            # Generate routes
             furthest_route = self.generate_routes(battery.position, furthest_house.position)
             second_furthest_route = self.generate_routes(battery.position, furthest_from_furthest_house.position)
         
+            # Add routes to routes
             routes[battery] = {}
             routes[battery][furthest_house] = furthest_route
             routes[battery][furthest_from_furthest_house] = second_furthest_route
 
+            # Add furthest houses to dictionaries
             self.furthest_house[battery] = furthest_house
             self.furthest_from_furthest_house[battery] = furthest_from_furthest_house
 
@@ -379,10 +389,11 @@ class DFM():
 
     def run(self):
 
+        # Get connections and routes
         connections = self.get_connections()
         routes = self.set_cables(connections)
 
-        # Total costs:
+        # Calculate Total costs
         total_length_cables = 0
         for battery, battery_routes in routes.items():
             for route in battery_routes.values():
@@ -395,6 +406,7 @@ class DFM():
         print(f"Total costs: {cost}")
 
 
+        # adjust connections for compatibility with Engine class
         adjusted_connections = {}
         house_idx = 0
         for house_num, house in self.houses.items():
@@ -405,6 +417,7 @@ class DFM():
                         house_idx += 1
                         break
 
+        # adjust routes for compatibility with Engine class
         adjusted_cable_routes = {}
         cable_idx = 0
         for house_num, house in self.houses.items():
