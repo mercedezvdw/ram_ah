@@ -71,7 +71,7 @@ After running many iterations we have stored the best runs and their data. These
     - Best score district 2: 34414
     - Best score district 3: x
 
-    This algorithm seems to perform the best out of the others on district 1 and 2. It uses a depth-first like approach to find the paths. Though, it fails to find a way to connect the houses while respecting battery capacities. It can possibly be improved by adding more layers in depth.
+    This algorithm seems to perform the best out of the others on district 1 and 2. It uses a depth-first like approach to find the paths. Though, it fails to find a way to connect the houses while respecting battery capacities in district 3. It can possibly be improved by adding more layers in depth.
 
 
 Conclusion:
