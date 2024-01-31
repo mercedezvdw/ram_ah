@@ -14,42 +14,43 @@ class WriteData():
         """
         Writes the result of a single experiment in a .json file.
         """
-        # data (testdata, real data TBD)
+        # Data (testdata, real data TBD)
         data = []
         header = {"district": self.districtNumber, "costs-shared": total_costs}
         data.append(header)
         
-        # create the entire dataset
+        # Create the entire dataset
         for i in range(len(batteries)):
             bat_pos_str = f"{batteries[i].position[0]},{batteries[i].position[1]}"
             houses_per_battery = []
-            # if functioning correctly, len(houses) == len(cable_routes)
-            
+
+            # If functioning correctly, len(houses) == len(cable_routes)
             for j in range(len(houses)):
                 house_pos_str = f"{houses[j].position[0]},{houses[j].position[1]}"
                 house_connection_pos = f"{connections[j][0][0]},{connections[j][0][1]}"
                 battery_connection_pos = f"{connections[j][1][0]},{connections[j][1][1]}"
                 house_output = f"{houses[j].max_output}"
-                #print(house_pos_str, battery_connection_pos)
-                # check if the current house truly goes to this battery
+
+                # Check if the current house truly goes to this battery
                 if bat_pos_str == battery_connection_pos:
-                    # make a list of strings from the route
+
+                    # Make a list of strings from the route
                     route = []
                     if cable_routes.get(j) is not None and len(cable_routes[j]):
                         for k in range(len(cable_routes[j])):
                             route_str = f"{cable_routes[j][k][0]},{cable_routes[j][k][1]}"
                             route.append(route_str)
-                        
+
                     separate_house = {"location": house_pos_str, "output": house_output, "cables": route}
                     houses_per_battery.append(separate_house)
 
             battery_data = {"location": bat_pos_str, "capacity": 1507.0, "houses": houses_per_battery}
             data.append(battery_data)
-        
-        # serializing json
+
+        # Serializing json
         json_object = json.dumps(data, indent=2)
-        
-        # writing to file
+
+        # Writing to file
         with open(f"data/results/district_{self.districtNumber}/district-{self.districtNumber}_{self.usedAlgorithm}.json", "w") as outfile:
             outfile.write(json_object)
 
@@ -78,6 +79,7 @@ class WriteData():
 
             # Determine the next index
             if file_exists:
+                
                 # If file exists, find the last index
                 with open(file_name, mode='r') as read_file:
                     last_line = list(csv.reader(read_file))[-1]
@@ -86,10 +88,9 @@ class WriteData():
             else:
                 next_index = 1  # Start from 1 if file doesn't exist
 
-
             # Write the new data
             writer.writerow([next_index, self.districtNumber, total_costs, run_time])
-    
+            
 
 # JSON FORMAT:
 '''
