@@ -87,4 +87,4 @@ After running many iterations we have stored the best runs and their data. These
 
 
 ## Conclusion:
-    We have created algorithms that have at least 2x the efficiency than our base algorithm in every district. We are happy with the progress we made.
+We have created algorithms that have at least 2x the efficiency than our base algorithm in every district. We are happy with the progress we made.
