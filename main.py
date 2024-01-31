@@ -21,7 +21,6 @@ from code.algorithms.Rv2 import *
 from code.algorithms.Engine import Engine
 import argparse
 
-
 if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)

@@ -1,4 +1,4 @@
-# Mercedez van der Wal, Rembrand Ruppert
+# Mercedez van der Wal, Team RAM
 # Nearest-Battery Heuristic Algorithm -- Shortest path to closest battery.
 # For every house, check first if there is already a cable connected, to minimilize the costs of cables
 
@@ -403,5 +403,7 @@ class NBH_A():
         for route in cable_routes.values():
             route_costs = (len(route) - 1) * 9
             sum_costs += route_costs
+        
+        print(f"The total price of the cables is {sum_costs}")
 
         return sum_costs, cable_routes, connections, houses_shuffled

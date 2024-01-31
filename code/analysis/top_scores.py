@@ -3,8 +3,6 @@ import json
 import numpy as np
 import pandas as pd
 
-
-
 def plot_top_scores():
 
     costs = {}
@@ -16,19 +14,18 @@ def plot_top_scores():
             if district == 3 and algo == "DFM":
                 break
 
-            # read data
+            # Read data
             file = open(f"data/results/district_{district}/district-{district}_{algo}.json")
             data = json.load(file)
             total_cost = data[0]["costs-shared"]
 
-            # add to dict
+            # Add to dict
             algo_cost[district] = total_cost
 
-
-            # close file
+            # Close file
             file.close()
 
-        # add to dict
+        # Add to dict
         costs[algo] = algo_cost
 
     tags = ('District 1', 'District 2', 'District 3')
@@ -38,7 +35,7 @@ def plot_top_scores():
     RV2 = (costs["Rv2"][1], costs["Rv2"][2], costs["Rv2"][3])
     SADDA = (costs["SADDA"][1], costs["SADDA"][2], costs["SADDA"][3])
 
-    # create a dataframe
+    # Create a dataframe
     df = pd.DataFrame({"DFM": DFM, "NBHA": NBHA, "SADDA": SADDA, "RV2": RV2}, index=tags)
     df.plot.bar(rot=0, figsize=(12, 5))
     plt.tight_layout()
@@ -46,9 +43,6 @@ def plot_top_scores():
     plt.xlabel("District")
     plt.title("Costs per district per algorithm")
     plt.show()
-
-
-
 
 
 plot_top_scores()

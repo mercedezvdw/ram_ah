@@ -32,7 +32,6 @@ class Engine:
 
         t1 = time.time()
 
-
         if self.algo == "Rv2":
             algo = Rv2(self.batteries, self.houses, self.seed)
             connections, cable_routes, total_costs = algo.run()
@@ -70,8 +69,7 @@ class Engine:
         t2 = time.time()
         self.runtime = t2 - t1
 
-
-        ## rewriting JSON
+        # Rewriting JSON
         existing_data = RD.ReadExperimentData()
 
         if existing_data is not None:
@@ -82,18 +80,7 @@ class Engine:
         else:
             WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes, connections)
 
-            
-
-
-        #print(self.houses) # {0: class, 1: class, ...}
-        #print(self.batteries) # {0: class, 1: class, ...}
-        #print(cable_routes) # {0: [[xbegin,ybegin], [xend,yend]], 1: [[xbegin,ybegin], [xend,yend]], ...}
-
-        # WD.WriteExperimentData(total_costs, self.houses, self.batteries, cable_routes, connections)
-        # total_costs_N, houses_N, batteries_N, cable_routes_N, connections_N = RD.ReadExperimentData()
-        # when the house-battery assigning works correctly, these read dicts will be the same as the written ones
-
-        # save run data to csv
+        # Save run data to csv
         if self.save_csv_data:
             WD.WriteRunCSV(total_costs, self.runtime)
 

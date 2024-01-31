@@ -1,16 +1,17 @@
 # Rembrand Ruppert, Mercedez van der Wal, Yessin Radouane
 # Random Walk Algorithm (RWA) (3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords))
 # choose random battery from every house and get a greedy path.
+# Baseline 1.0
 
 import random
 import math
 
 
-def calculate_distance(c1, c2):
+def calculate_distance(self, c1, c2):
     """
-    Calculate the distance between two coordinates
+    Calculate the Manhattan distance between two coordinates
     """
-    distance = math.sqrt(((c1[0] - c2[0]) ** 2) + ((c1[1] - c2[1]) ** 2))
+    distance = abs(c1[0] - c2[0]) + abs(c1[1] - c2[1])
     return distance
     
 def make_connections(houses: dict, batteries: dict):
@@ -19,7 +20,7 @@ def make_connections(houses: dict, batteries: dict):
     """
     connections = {}
     
-    #Cnnnect every house to a random battery
+    # Connect every house to a random battery
     for house_num, house in houses.items():        
         all_batteries = list(batteries.values())
         choice = random.choice(all_batteries)
@@ -27,7 +28,6 @@ def make_connections(houses: dict, batteries: dict):
         connections[house] = choice
     
     return connections
-
 
 def check_logical_moves(current_position, end_position, illegal_move = None):
     """ This function checks which move minimizes the distance to the end position and returns that move.
@@ -39,24 +39,24 @@ def check_logical_moves(current_position, end_position, illegal_move = None):
     if illegal_move != None:
         all_moves.remove(illegal_move)
 
-    # possible moves
+    # Possible moves
     move_1 = all_moves[0]
     move_2 = all_moves[1]
     move_3 = all_moves[2]
 
-    # calculate distance to end position after simulating the move
+    # Calculate distance to end position after simulating the move
     new_position_1 = [current_position[0] + move_1[0], current_position[1] + move_1[1]]
     new_position_2 = [current_position[0] + move_2[0], current_position[1] + move_2[1]]
     new_position_3 = [current_position[0] + move_3[0], current_position[1] + move_3[1]]
 
-    # caclulate new distance from new position
+    # Caclulate new distance from new position
     distance_1 = calculate_distance(new_position_1, end_position)
     distance_2 = calculate_distance(new_position_2, end_position)
     distance_3 = calculate_distance(new_position_3, end_position)
 
     distances = [distance_1, distance_2, distance_3]
 
-    # remove the move that adds the most distance to the end position
+    # Remove the move that adds the most distance to the end position
     if distance_1 == max(distances):
         all_moves.remove(move_1)
 
@@ -80,12 +80,7 @@ def check_logical_moves(current_position, end_position, illegal_move = None):
         else:
             all_moves.remove(move_2)
 
-
     return all_moves
-
-
-
-
     
 def generate_routes(start_position, end_position):
     """
@@ -93,8 +88,6 @@ def generate_routes(start_position, end_position):
     current pos: tuple
     end pos: list
     """
-    # print(f"Generating route from {start_position} to {end_position}")
-    
     current_position = start_position
     route = [current_position]
     last_direction = None
@@ -131,10 +124,8 @@ def generate_routes(start_position, end_position):
         if direction == inefficient_moves[last_direction]:
             print("WARNING: Inefficient move")
 
-        
         # Calculate new position after following direction
         new_position = [current_position[0] + direction[0], current_position[1] + direction[1]]
-        # print(new_position)
 
         # Make sure it's within the grid size
         if 0 <= new_position[0] < 50 and 0 <= new_position[1] < 50:

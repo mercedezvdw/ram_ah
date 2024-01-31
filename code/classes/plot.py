@@ -18,9 +18,11 @@ class PlotCase():
         self.cable_routes = cable_routes
         self.connections = connections
         self.battery_colors = {}
-        #print(cable_routes)
     
     def AssignBatteryColors(self):
+        """
+        Assign colors to each battery
+        """
         battery_colors = {}
         colors = ['deepskyblue', 'darkorange', 'forestgreen', 'deeppink', 'mediumpurple']
         i = 0
@@ -46,8 +48,8 @@ class PlotCase():
         # make DensityMap a numpy array to use more efficiently
         #DensityMap = np.array(DensityMap)
 
-        # create a merged list of all positions and get the minimum and maximum x and y values to make a map
-        # add all x and y to respective lists
+        # Create a merged list of all positions and get the minimum and maximum x and y values to make a map
+        # Add all x and y to respective lists
         all_x = []
         all_y = []
         for i in range(len(self.batteries)):
@@ -59,15 +61,16 @@ class PlotCase():
         for i in range(len(self.houses)):
             all_y.append(self.houses[i].position[1])
 
-        # find min and max x and y
+        # Find min and max x and y
         min_x = min(all_x)
         min_y = min(all_y)
         max_x = max(all_x)
         max_y = max(all_y)
 
-        # define a square based on the biggest axix
+        # Define a square based on the biggest axix
         if (max_x - min_x) > (max_y - min_y):
-            # make sure GridSize is an int
+            
+            # Make sure GridSize is an int
             GridSize = int(max_x - min_x)
             minimum = min_x
             maximum = max_x
@@ -84,7 +87,7 @@ class PlotCase():
         #plt.scatter(DensityMap[:, 0:1], DensityMap[:, 1:2], c=DensityMap[:, 2:3], cmap=cmap, marker=',', s=55, alpha=1, zorder=-2)
         #plt.colorbar()
 
-        # plot grid lines
+        # Plot grid lines
         for i in range(-self.extraGridSpace, GridSize+1 +self.extraGridSpace):
             # I used int()+1 so it is rounded up, int always rounds down
             plt.vlines(x = i + int(xCenter - GridSize/2)+1, ymin = int(yCenter - GridSize/2)+1-5, ymax = int(yCenter + GridSize/2)+1+5, linestyles = "-", linewidth=0.666, alpha = 0.1, zorder=-1)
@@ -96,7 +99,7 @@ class PlotCase():
         
         battery_colors = self.AssignBatteryColors()
         
-        # plot houses
+        # Plot houses
         if self.connections is not None:
             for i in range(len(self.houses)):
                 for key, connection in self.connections.items():
@@ -109,7 +112,7 @@ class PlotCase():
             for i in range(len(self.houses)):
                 plt.scatter(self.houses[i].position[0], self.houses[i].position[1], s = 30, color = 'r', marker = '^', label = 'house', zorder=1)
             
-        # plot batteries
+        # Plot batteries
         for coord, color in battery_colors.items():
             plt.scatter(coord[0], coord[1], s = 55, color = color, marker = ',', label = 'battery', zorder = 1)
                 
@@ -127,14 +130,13 @@ class PlotCase():
             for key, route in self.cable_routes.items():
                 x, y = zip(*route)
                 plt.plot(x, y, color='b', linewidth=0.666, zorder=0)
-            
         
-        # drawing details
+        # Drawing details
         plt.xlim(-1,GridSize+1)
         plt.ylim(-1,GridSize+1)
-        #plt.legend()
         
         plt.tight_layout()
         plt.axis('scaled')
-        # actuallly plot the thing
+        
+        # Actuallly plot the thing
         plt.show()
