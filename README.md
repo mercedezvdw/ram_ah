@@ -25,14 +25,14 @@ We are using the given data of districts 1-3. District 0 and test have been used
 ## Algorithms
 To find an efficient solution to our problem, we have implemented several algorithms.
 
-- ### Depth First Mycelium Algorithm
-    - DFA finds furthest house from battery and the house furthest from that house, connects them with a cable, then connects the rest of the houses to the closest cable or battery.
-
 - ### Random v2 Algorithm (baseline 2.0)
-    - RWA combines a greedy and random algorithm. There are 3 directions possible every step / max coordinates based on district size / no overlaying cables (two segments with the same begin and ending coords).
+    - RWA combines a greedy and random algorithm. It combines all the houses to a random battery. Then for connections, there are 3 directions possible every step as the fourth will put you back where you came from. It will filter out the worst move and make a random choice between the left-over two choices. It will have seperate cable to every house, this means a cable cannot connect to another cable. 
+
+- ### Depth First Mycelium Algorithm
+    - DFM tries to connect all houses with their closest battery while respecting the maximum capacities of the batteries. If this is not possible, then it will simulate a swap between any 2 houses and their respective batteries to see if the swap makes room for the unconnected house to be connected as well. If this works it starts making the paths. If there is no swap to be made like in district 2, we consider this algorithm as non-efficient and will be left out in comparisons against other algorithms. If the connections are made, the algorithm finds paths in a way that resembles how a mycelium moves. It finds the furthest house connected to a battery, let's call this house A. Then, it finds a house thats furthest from house A and also connected to the same battery. Two main cables are made from the battery to each of the houses. It resumes to find the next furthest house from the battery and connect it to its closest cable or battery if it is closer than any cable.
 
 - ### Nearest-Battery Heuristic Algorithm -- 
-    - NBHA finds the shortest path to closest battery. For every house, check first if there is already a cable connected, to minimilize the costs of cables.
+    - NBHA starts with a random house and looks for the closest battery. Then it looks for the closest path to the battery. The closest path will be compared to creating a new path. Based on this, the cables will be placed. If there is no closer path, there comes a new path. This algorithm takes the maximum capacity of the batteries into account. If it’s not possible to assign a house to a battery due ineffeciency in distribution of capacity, another house will be disconnected until all the house have a valid connection. This algorithm is based on our own heuristics.
 
 - ### Smart Allocated Density Districts Algorithm 
     - SADDA uses a self built K-means clustering algorithm that creates the same number of batteries randomly placed 'centriods', and in a loop finds the nearest houses, gets a new mean position for each centroid, and repeats this process a random amount of times to eventually find 'sub-districts', each connected to a single battery. It creates an array that indicates which houses are assigned to which battery. A cable path is then placed from each house to its corresponding battery, and after all cables have been placed, the algorithm goes over all paths and eliminates overlapping cable segments for cables that connect to the same battery.
